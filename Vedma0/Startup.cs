@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Vedma0.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Vedma0.Models;
 
 namespace Vedma0
 {
@@ -37,9 +38,9 @@ namespace Vedma0
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-
+            services.AddDefaultIdentity<VedmaUser>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultUI();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

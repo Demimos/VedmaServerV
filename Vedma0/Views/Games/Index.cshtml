@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Vedma0.Models.Game>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OwnerId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IncludeVR)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IncludeGeo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IncludeGeoFence)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IncludeNews)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IncludeNewsPublishing)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IncludeNewsRate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IncludeNewsComments)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Active)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OwnerId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncludeVR)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncludeGeo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncludeGeoFence)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncludeNews)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncludeNewsPublishing)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncludeNewsRate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncludeNewsComments)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Active)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
