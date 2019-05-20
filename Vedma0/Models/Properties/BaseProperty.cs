@@ -24,14 +24,15 @@ namespace Vedma0.Models.Properties
         public string Description { get; set; }
         public long? PresetId { get; set; }
         public Preset Preset { get; set; }
-        [DisplayName("Значение по умолчанию")]
-        public string DefaultValue { get; set; }
         [Required]
         public int SortValue { get; set; }
 
         public IList<Property> Properties { get; set; }
 
-        public abstract string GetName();
+        public string GetName()
+        {
+            return Name;
+        }
 
         public abstract string GetValue();
     }

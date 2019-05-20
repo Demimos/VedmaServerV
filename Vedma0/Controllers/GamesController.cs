@@ -59,7 +59,9 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,OwnerId,IncludeVR,IncludeGeo,IncludeGeoFence,IncludeNews,IncludeNewsPublishing,IncludeNewsRate,IncludeNewsComments,StartTime,EndTime,Active")] Game game)
+        public async Task<IActionResult> Create([Bind("Id,Name,OwnerId,IncludeVR,IncludeGeo," +
+            "IncludeGeoFence,IncludeNews,IncludeNewsPublishing,IncludeNewsRate,IncludeNewsComments," +
+            "StartTime,EndTime,Active")] Game game)
         {
             if (ModelState.IsValid)
             {
@@ -92,7 +94,8 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,OwnerId,IncludeVR,IncludeGeo,IncludeGeoFence,IncludeNews,IncludeNewsPublishing,IncludeNewsRate,IncludeNewsComments,StartTime,EndTime,Active")] Game game)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,OwnerId,IncludeVR,IncludeGeo,IncludeGeoFence," +
+            "IncludeNews,IncludeNewsPublishing,IncludeNewsRate,IncludeNewsComments,StartTime,EndTime,Active")] Game game)
         {
             if (id != game.Id)
             {

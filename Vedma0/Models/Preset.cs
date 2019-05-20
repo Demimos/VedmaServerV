@@ -26,6 +26,10 @@ namespace Vedma0.Models
         [Required]
         [DisplayName("Название")]
         public string Name { get; set; }
+      
+        [DisplayName("Описание")]
+        public string Description { get; set; }
+
         [Required]
         public bool SelfInsight { get; set; }
 
