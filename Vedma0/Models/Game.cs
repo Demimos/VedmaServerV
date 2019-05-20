@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,7 +10,8 @@ namespace Vedma0.Models
 {
     public class Game
     {
-        public string Id { get; set; }
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
         [Required]
         [DisplayName("Название")]
         public string Name { get; set; }
@@ -41,7 +43,6 @@ namespace Vedma0.Models
 
         public Game()
         {
-            Id = Guid.NewGuid().ToString();
         }
     }
 }

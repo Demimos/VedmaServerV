@@ -31,7 +31,7 @@ namespace Vedma0.Controllers
         }
 
         // GET: Games/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
@@ -92,7 +92,7 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,OwnerId,IncludeVR,IncludeGeo,IncludeGeoFence,IncludeNews,IncludeNewsPublishing,IncludeNewsRate,IncludeNewsComments,StartTime,EndTime,Active")] Game game)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,OwnerId,IncludeVR,IncludeGeo,IncludeGeoFence,IncludeNews,IncludeNewsPublishing,IncludeNewsRate,IncludeNewsComments,StartTime,EndTime,Active")] Game game)
         {
             if (id != game.Id)
             {
@@ -123,7 +123,7 @@ namespace Vedma0.Controllers
         }
 
         // GET: Games/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
@@ -151,7 +151,7 @@ namespace Vedma0.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GameExists(string id)
+        private bool GameExists(Guid id)
         {
             return _context.Game.Any(e => e.Id == id);
         }
