@@ -11,7 +11,7 @@ namespace Vedma0.Models.Properties
     {
         public BaseProperty()
         {
-            Properties = new List<Property>();
+            Properties = new List<EntityProperty>();
         }
         public long Id { get; set; }
         [Required]
@@ -26,8 +26,10 @@ namespace Vedma0.Models.Properties
         public Preset Preset { get; set; }
         [Required]
         public int SortValue { get; set; }
+        [Required]
+        public bool Visible { get; set; }
 
-        public IList<Property> Properties { get; set; }
+        public IList<EntityProperty> Properties { get; set; }
 
         public string GetName()
         {

@@ -7,6 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\20190520101735_QQQ.cs" />
+    <Compile Remove="Data\Migrations\20190520101735_QQQ.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190520102143_QQQ1.cs" />
+    <Compile Remove="Data\Migrations\20190520102143_QQQ1.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190521114503_qqqqq.cs" />
+    <Compile Remove="Data\Migrations\20190521114503_qqqqq.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190521115601_qqqqqws.cs" />
+    <Compile Remove="Data\Migrations\20190521115601_qqqqqws.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190521121831_112.cs" />
+    <Compile Remove="Data\Migrations\20190521121831_112.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.10" />

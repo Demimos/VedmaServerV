@@ -5,10 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Vedma0.Models.GameEntities;
 
 namespace Vedma0.Models.Properties
 {
-    public class NumericProperty : Property
+    public class NumericProperty : EntityProperty
     {
         [Required]
         [DisplayName("Значение")]
@@ -17,6 +18,26 @@ namespace Vedma0.Models.Properties
         public override string GetValue()
         {
             return Value.ToString("F", CultureInfo.InvariantCulture);
+        }
+
+
+        public NumericProperty() : base()
+        {
+
+        }
+        public NumericProperty(BaseNumericProperty bp, GameEntity ge) : base()
+        {
+            Name = bp.Name;
+            BasePropertyId = bp.Id;
+            Description = bp.Description;
+            GameId = bp.GameId;
+            GameEntityId = ge.Id;
+            Visible = bp.Visible;
+            if (ge.GameId != bp.GameId)
+                throw new FormatException("Game data Leak");
+            Value = bp.DefaultValue;
+            PresetId = bp.PresetId;
+            SortValue = bp.SortValue;
         }
     }
 }

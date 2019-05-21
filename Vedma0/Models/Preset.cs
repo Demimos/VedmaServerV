@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Vedma0.Models.GameEntities;
+using Vedma0.Models.ManyToMany;
+using Vedma0.Models.Properties;
 
 namespace Vedma0.Models
 {
@@ -13,12 +15,15 @@ namespace Vedma0.Models
     {
         public Preset()
         {
-            GameEntities = new List<GameEntity>();
+            EntityPresets = new List<EntityPreset>();
+            AllProperties = new List<BaseProperty>();
+       
         }
         public long Id { get; set; }
         [Required]
         public Guid GameId { get; set; }
         public Game Game { get; set; }
+      
         public int SortValue { get; set; }
         
         public string _Abilities { get; set; }
@@ -26,14 +31,18 @@ namespace Vedma0.Models
         [Required]
         [DisplayName("Название")]
         public string Name { get; set; }
-      
+        [DisplayName("Заголовок")]
+        public string Title { get; set; }
+
         [DisplayName("Описание")]
         public string Description { get; set; }
 
         [Required]
         public bool SelfInsight { get; set; }
 
-        public IList<GameEntity> GameEntities { get; set; }
+        public IList<EntityPreset> EntityPresets { get; set; }
+        public IList<BaseProperty> AllProperties { get; set; }
+
 
     }
 }

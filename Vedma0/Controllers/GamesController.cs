@@ -27,7 +27,7 @@ namespace Vedma0.Controllers
         // GET: Games
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Game.ToListAsync());
+            return View(await _context.Games.ToListAsync());
         }
 
         // GET: Games/Details/5
@@ -38,7 +38,7 @@ namespace Vedma0.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game
+            var game = await _context.Games
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (game == null)
             {
@@ -65,7 +65,7 @@ namespace Vedma0.Controllers
         {
             if (ModelState.IsValid)
             {
-                game.Master = await _userManager.GetUserAsync(HttpContext.User);
+                game.OwnerId = (await _userManager.GetUserAsync(HttpContext.User)).Id;
                 _context.Add(game);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -81,7 +81,7 @@ namespace Vedma0.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game.FindAsync(id);
+            var game = await _context.Games.FindAsync(id);
             if (game == null)
             {
                 return NotFound();
@@ -133,7 +133,7 @@ namespace Vedma0.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game
+            var game = await _context.Games
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (game == null)
             {
@@ -148,15 +148,15 @@ namespace Vedma0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var game = await _context.Game.FindAsync(id);
-            _context.Game.Remove(game);
+            var game = await _context.Games.FindAsync(id);
+            _context.Games.Remove(game);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool GameExists(Guid id)
         {
-            return _context.Game.Any(e => e.Id == id);
+            return _context.Games.Any(e => e.Id == id);
         }
     }
 }

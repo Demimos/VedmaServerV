@@ -17,13 +17,13 @@ namespace Vedma0.Models.GameEntities
         public bool HasSuspendedSignal { get; set; }
         public string InActiveMessage { get; set; }
         public IList<DiaryPage> Diary { get; set; }
-        public IList<Preset> Presets { get; set; }
+
 
 
         public Character()
         {
             Diary = new List<DiaryPage>();
-            Presets = new List<Preset>();
+
         }
     }
 }

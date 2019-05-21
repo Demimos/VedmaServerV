@@ -6,10 +6,11 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Vedma0.Models.GameEntities;
 
 namespace Vedma0.Models.Properties
 {
-    public class TextArrayProperty : Property
+    public class TextArrayProperty : EntityProperty
     {
         [Required]
         private string _Values { get; set; }
@@ -45,5 +46,25 @@ namespace Vedma0.Models.Properties
             }
             return result;
         }
+
+        public TextArrayProperty() : base()
+        {
+
+        }
+        public TextArrayProperty(BaseTextArrayProperty bp, GameEntity ge) : base()
+        {
+            Name = bp.Name;
+            BasePropertyId = bp.Id;
+            Description = bp.Description;
+            GameId = bp.GameId;
+            GameEntityId = ge.Id;
+            Visible = bp.Visible;
+            if (ge.GameId != bp.GameId)
+                throw new FormatException("Game data Leak");
+            Values = bp.DefaultValues;
+            PresetId = bp.PresetId;
+            SortValue = bp.SortValue;
+        }
+
     }
 }

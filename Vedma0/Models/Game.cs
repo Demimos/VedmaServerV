@@ -1,10 +1,15 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Vedma0.Models.GameEntities;
+using Vedma0.Models.Logging;
+using Vedma0.Models.ManyToMany;
+using Vedma0.Models.Properties;
 
 namespace Vedma0.Models
 {
@@ -38,11 +43,21 @@ namespace Vedma0.Models
         public DateTime EndTime { get; set; }
         public bool Active { get; set; }
 
-        public string MasterId { get; set; }
-        public VedmaUser Master { get; set; }
+        public IList<GameEntity> GameEntities { get; set; }
+        public IList<Preset> Presets { get; set; }
+        public IList<BaseProperty> AllProperties { get; set; }
+       //public IList<Log> Logs { get; set; }
+        public IList<GameUser> GameUsers { get; set; }
+
+
 
         public Game()
         {
+            
+            GameEntities = new List<GameEntity>();
+            Presets = new List<Preset>();
+            AllProperties = new List<BaseProperty>();
+            GameUsers = new List<GameUser>();
         }
     }
 }

@@ -7,7 +7,7 @@ using Vedma0.Models.GameEntities;
 
 namespace Vedma0.Models.Properties
 {
-    public abstract class Property : BaseProperty
+    public abstract class EntityProperty : BaseProperty
     {
 
         [Required]
