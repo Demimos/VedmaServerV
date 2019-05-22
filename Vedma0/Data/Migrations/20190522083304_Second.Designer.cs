@@ -10,8 +10,8 @@ using Vedma0.Data;
 namespace Vedma0.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190521123333_q")]
-    partial class q
+    [Migration("20190522083304_Second")]
+    partial class Second
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -164,6 +164,9 @@ namespace Vedma0.Data.Migrations
                     b.Property<string>("OwnerId");
 
                     b.Property<DateTime>("StartTime");
+
+                    b.Property<string>("_MasterIds")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
@@ -337,6 +340,47 @@ namespace Vedma0.Data.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("BaseProperty");
                 });
 
+            modelBuilder.Entity("Vedma0.Models.Properties.EntityProperty", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("BasePropertyId");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
+
+                    b.Property<long>("GameEntityId");
+
+                    b.Property<Guid>("GameId");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<long?>("PresetId");
+
+                    b.Property<int>("SortValue");
+
+                    b.Property<bool>("Visible");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BasePropertyId");
+
+                    b.HasIndex("GameEntityId");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("PresetId");
+
+                    b.ToTable("Properties");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("EntityProperty");
+                });
+
             modelBuilder.Entity("Vedma0.Models.VedmaUser", b =>
                 {
                     b.Property<string>("Id")
@@ -477,23 +521,6 @@ namespace Vedma0.Data.Migrations
                     b.HasDiscriminator().HasValue("BaseTextProperty");
                 });
 
-            modelBuilder.Entity("Vedma0.Models.Properties.EntityProperty", b =>
-                {
-                    b.HasBaseType("Vedma0.Models.Properties.BaseProperty");
-
-                    b.Property<long>("BasePropertyId");
-
-                    b.Property<long>("GameEntityId");
-
-                    b.HasIndex("BasePropertyId");
-
-                    b.HasIndex("GameEntityId");
-
-                    b.ToTable("EntityProperty");
-
-                    b.HasDiscriminator().HasValue("EntityProperty");
-                });
-
             modelBuilder.Entity("Vedma0.Models.Properties.NumericProperty", b =>
                 {
                     b.HasBaseType("Vedma0.Models.Properties.EntityProperty");
@@ -629,20 +656,13 @@ namespace Vedma0.Data.Migrations
             modelBuilder.Entity("Vedma0.Models.Properties.BaseProperty", b =>
                 {
                     b.HasOne("Vedma0.Models.Game", "Game")
-                        .WithMany("AllProperties")
+                        .WithMany("BaseProperties")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Vedma0.Models.Preset", "Preset")
-                        .WithMany("AllProperties")
+                        .WithMany("BaseProperties")
                         .HasForeignKey("PresetId");
-                });
-
-            modelBuilder.Entity("Vedma0.Models.GameEntities.Character", b =>
-                {
-                    b.HasOne("Vedma0.Models.VedmaUser", "User")
-                        .WithMany("Characters")
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Vedma0.Models.Properties.EntityProperty", b =>
@@ -656,6 +676,22 @@ namespace Vedma0.Data.Migrations
                         .WithMany("Properties")
                         .HasForeignKey("GameEntityId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Vedma0.Models.Game", "Game")
+                        .WithMany("EntityProperties")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Vedma0.Models.Preset", "Preset")
+                        .WithMany("EntityProperties")
+                        .HasForeignKey("PresetId");
+                });
+
+            modelBuilder.Entity("Vedma0.Models.GameEntities.Character", b =>
+                {
+                    b.HasOne("Vedma0.Models.VedmaUser", "User")
+                        .WithMany("Characters")
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

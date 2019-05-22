@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\20190520085402_QQ.cs" />
+    <Compile Remove="Data\Migrations\20190520085402_QQ.Designer.cs" />
     <Compile Remove="Data\Migrations\20190520101735_QQQ.cs" />
     <Compile Remove="Data\Migrations\20190520101735_QQQ.Designer.cs" />
     <Compile Remove="Data\Migrations\20190520102143_QQQ1.cs" />
@@ -17,6 +19,10 @@
     <Compile Remove="Data\Migrations\20190521115601_qqqqqws.Designer.cs" />
     <Compile Remove="Data\Migrations\20190521121831_112.cs" />
     <Compile Remove="Data\Migrations\20190521121831_112.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190521123333_q.cs" />
+    <Compile Remove="Data\Migrations\20190521123333_q.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190522071441_qwe.cs" />
+    <Compile Remove="Data\Migrations\20190522071441_qwe.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

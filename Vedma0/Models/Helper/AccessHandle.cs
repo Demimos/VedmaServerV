@@ -18,5 +18,13 @@ namespace Vedma0.Models.Helper
             }
             return true;
         }
+        public static bool GameMasterCheck(ApplicationDbContext context, VedmaUser user, Game game)
+        {
+            return GameAccessCheck(context, user, game) && IsMaster(user, game);
+        }
+        public static bool IsMaster(VedmaUser user, Game game)
+        {
+            return game.OwnerId == user.Id || game.MasterIds.Contains(user.Id);
+        }
     }
 }

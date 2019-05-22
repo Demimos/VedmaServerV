@@ -16,8 +16,8 @@ namespace Vedma0.Models
         public Preset()
         {
             EntityPresets = new List<EntityPreset>();
-            AllProperties = new List<BaseProperty>();
-       
+            BaseProperties = new List<BaseProperty>();
+            EntityProperties = new List<EntityProperty>();
         }
         public long Id { get; set; }
         [Required]
@@ -41,8 +41,8 @@ namespace Vedma0.Models
         public bool SelfInsight { get; set; }
 
         public IList<EntityPreset> EntityPresets { get; set; }
-        public IList<BaseProperty> AllProperties { get; set; }
-
+        public IList<BaseProperty> BaseProperties { get; set; }
+        public IList<EntityProperty> EntityProperties { get; set; }
 
     }
 }

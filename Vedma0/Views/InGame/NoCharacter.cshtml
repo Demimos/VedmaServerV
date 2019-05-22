@@ -1,6 +1,6 @@
 ﻿
 @{
-    Layout = null;
+
 }
 
 <!DOCTYPE html>
@@ -11,6 +11,14 @@
     <title>NoCharacter</title>
 </head>
 <body>
+    @if (ViewData["IsMaster"].Equals("true"))
+    {
+    <a class="btn btn-default" asp-action="Index" asp-controller="Console" asp-route-id=@ViewData["Id"]>
+        Средства разработки
+    </a>
+        <a asp-action="Index" asp-controller="Console" asp-route-id="@ViewData["Id"]">Средства разработки</a>
+    }
+
     <h1>Вам ещё не присвоен персонаж</h1>
 </body>
 </html>

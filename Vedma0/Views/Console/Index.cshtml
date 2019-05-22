@@ -1,0 +1,105 @@
+﻿@model Vedma0.Models.Game
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+
+    <div>
+        <h4>Game</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.OwnerId)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.OwnerId)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.IncludeVR)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IncludeVR)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.IncludeGeo)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IncludeGeo)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.IncludeGeoFence)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IncludeGeoFence)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.IncludeNews)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IncludeNews)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.IncludeNewsPublishing)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IncludeNewsPublishing)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.IncludeNewsRate)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IncludeNewsRate)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.IncludeNewsComments)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IncludeNewsComments)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.StartTime)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.EndTime)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.EndTime)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Active)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Active)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model._MasterIds)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model._MasterIds)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>
+</body>
+</html>

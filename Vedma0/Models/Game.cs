@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -42,21 +43,31 @@ namespace Vedma0.Models
         [DisplayName("Конец игры")]
         public DateTime EndTime { get; set; }
         public bool Active { get; set; }
+        [Required]
+        public string _MasterIds { get; set; }
 
         public IList<GameEntity> GameEntities { get; set; }
         public IList<Preset> Presets { get; set; }
-        public IList<BaseProperty> AllProperties { get; set; }
-       //public IList<Log> Logs { get; set; }
+        public IList<BaseProperty> BaseProperties { get; set; }
+        public IList<EntityProperty> EntityProperties { get; set; }
+        //public IList<Log> Logs { get; set; }
         public IList<GameUser> GameUsers { get; set; }
 
+        [NotMapped]
+        public IList<string> MasterIds
+        {
+            get => JsonConvert.DeserializeObject<IList<string>>(_MasterIds);
+            set => _MasterIds = JsonConvert.SerializeObject(value);
+        }
 
 
         public Game()
         {
-            
+            MasterIds = new List<string>();
             GameEntities = new List<GameEntity>();
             Presets = new List<Preset>();
-            AllProperties = new List<BaseProperty>();
+            BaseProperties = new List<BaseProperty>();
+            EntityProperties = new List<EntityProperty>();
             GameUsers = new List<GameUser>();
         }
     }

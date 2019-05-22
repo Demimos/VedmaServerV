@@ -4,18 +4,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Vedma0.Data.Migrations
 {
-    public partial class q : Migration
+    public partial class First : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Game",
-                table: "Game");
-
-            migrationBuilder.RenameTable(
-                name: "Game",
-                newName: "Games");
-
             migrationBuilder.AddColumn<Guid>(
                 name: "CurrentGame",
                 table: "AspNetUsers",
@@ -32,16 +24,28 @@ namespace Vedma0.Data.Migrations
                 table: "AspNetUsers",
                 nullable: true);
 
-            migrationBuilder.AlterColumn<Guid>(
-                name: "Id",
-                table: "Games",
-                nullable: false,
-                oldClrType: typeof(string));
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Games",
-                table: "Games",
-                column: "Id");
+            migrationBuilder.CreateTable(
+                name: "Games",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    OwnerId = table.Column<string>(nullable: true),
+                    IncludeVR = table.Column<bool>(nullable: false),
+                    IncludeGeo = table.Column<bool>(nullable: false),
+                    IncludeGeoFence = table.Column<bool>(nullable: false),
+                    IncludeNews = table.Column<bool>(nullable: false),
+                    IncludeNewsPublishing = table.Column<bool>(nullable: false),
+                    IncludeNewsRate = table.Column<bool>(nullable: false),
+                    IncludeNewsComments = table.Column<bool>(nullable: false),
+                    StartTime = table.Column<DateTime>(nullable: false),
+                    EndTime = table.Column<DateTime>(nullable: false),
+                    Active = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Games", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "GameEntities",
@@ -71,7 +75,7 @@ namespace Vedma0.Data.Migrations
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,11 +194,7 @@ namespace Vedma0.Data.Migrations
                     Visible = table.Column<bool>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     DefaultValue = table.Column<double>(nullable: true),
-                    BaseTextProperty_DefaultValue = table.Column<string>(nullable: true),
-                    GameEntityId = table.Column<long>(nullable: true),
-                    BasePropertyId = table.Column<long>(nullable: true),
-                    Value = table.Column<double>(nullable: true),
-                    TextProperty_Value = table.Column<string>(nullable: true)
+                    BaseTextProperty_DefaultValue = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -204,25 +204,13 @@ namespace Vedma0.Data.Migrations
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_BaseProperties_Presets_PresetId",
                         column: x => x.PresetId,
                         principalTable: "Presets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_BaseProperties_BaseProperties_BasePropertyId",
-                        column: x => x.BasePropertyId,
-                        principalTable: "BaseProperties",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
-                        name: "FK_BaseProperties_GameEntities_GameEntityId",
-                        column: x => x.GameEntityId,
-                        principalTable: "GameEntities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -240,13 +228,60 @@ namespace Vedma0.Data.Migrations
                         column: x => x.GameEntityId,
                         principalTable: "GameEntities",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EntityPreset_Presets_PresetId",
                         column: x => x.PresetId,
                         principalTable: "Presets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Properties",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: false),
+                    GameId = table.Column<Guid>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    PresetId = table.Column<long>(nullable: true),
+                    SortValue = table.Column<int>(nullable: false),
+                    Visible = table.Column<bool>(nullable: false),
+                    GameEntityId = table.Column<long>(nullable: false),
+                    BasePropertyId = table.Column<long>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false),
+                    Value = table.Column<double>(nullable: true),
+                    TextProperty_Value = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Properties", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Properties_BaseProperties_BasePropertyId",
+                        column: x => x.BasePropertyId,
+                        principalTable: "BaseProperties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Properties_GameEntities_GameEntityId",
+                        column: x => x.GameEntityId,
+                        principalTable: "GameEntities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Properties_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Properties_Presets_PresetId",
+                        column: x => x.PresetId,
+                        principalTable: "Presets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -258,16 +293,6 @@ namespace Vedma0.Data.Migrations
                 name: "IX_BaseProperties_PresetId",
                 table: "BaseProperties",
                 column: "PresetId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BaseProperties_BasePropertyId",
-                table: "BaseProperties",
-                column: "BasePropertyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BaseProperties_GameEntityId",
-                table: "BaseProperties",
-                column: "GameEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Diary_CharacterId",
@@ -308,13 +333,30 @@ namespace Vedma0.Data.Migrations
                 name: "IX_Presets_GameId",
                 table: "Presets",
                 column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Properties_BasePropertyId",
+                table: "Properties",
+                column: "BasePropertyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Properties_GameEntityId",
+                table: "Properties",
+                column: "GameEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Properties_GameId",
+                table: "Properties",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Properties_PresetId",
+                table: "Properties",
+                column: "PresetId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "BaseProperties");
-
             migrationBuilder.DropTable(
                 name: "Diary");
 
@@ -328,14 +370,19 @@ namespace Vedma0.Data.Migrations
                 name: "Logs");
 
             migrationBuilder.DropTable(
+                name: "Properties");
+
+            migrationBuilder.DropTable(
+                name: "BaseProperties");
+
+            migrationBuilder.DropTable(
                 name: "GameEntities");
 
             migrationBuilder.DropTable(
                 name: "Presets");
 
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Games",
-                table: "Games");
+            migrationBuilder.DropTable(
+                name: "Games");
 
             migrationBuilder.DropColumn(
                 name: "CurrentGame",
@@ -348,21 +395,6 @@ namespace Vedma0.Data.Migrations
             migrationBuilder.DropColumn(
                 name: "PushToken",
                 table: "AspNetUsers");
-
-            migrationBuilder.RenameTable(
-                name: "Games",
-                newName: "Game");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "Id",
-                table: "Game",
-                nullable: false,
-                oldClrType: typeof(Guid));
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Game",
-                table: "Game",
-                column: "Id");
         }
     }
 }

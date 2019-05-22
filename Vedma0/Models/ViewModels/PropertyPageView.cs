@@ -15,13 +15,13 @@ namespace Vedma0.Models.ViewModels
         public PropertyPageView(Preset preset)
         {
             Title = preset.Title;
-            PropertyViews = preset.AllProperties.OrderBy(p => p.SortValue).Select(p => new PropertyView((EntityProperty)p)).ToList();
+            PropertyViews = preset.EntityProperties.OrderBy(p => p.SortValue).Select(p => new PropertyView(p)).ToList();
         }
         public PropertyPageView(IGrouping<string, Preset> group)
         {
             PropertyViews = new List<PropertyView>();
             Title = group.Key;
-            PropertyViews= group.SelectMany(p=>p.AllProperties.OrderBy(pr => pr.SortValue)).Select(pr => new PropertyView((EntityProperty)pr)).ToList();
+            PropertyViews= group.SelectMany(p=>p.EntityProperties.OrderBy(pr => pr.SortValue)).Select(pr => new PropertyView(pr)).ToList();
             SortValue = group.Select(p => p.SortValue).Min();
         }
     }
