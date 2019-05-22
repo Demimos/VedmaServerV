@@ -1,10 +1,9 @@
 ﻿<!DOCTYPE html>
+
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Vedma0</title>
-
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
@@ -17,32 +16,34 @@
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Ведьма</a>
+    <div>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Ведьма</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a asp-area="" asp-controller="Console" asp-action="Index">Игра</a></li>
+                        <li><a asp-area="" asp-controller="ControlPanel" asp-action="Index">Панель управления</a></li>
+                        <li><a asp-area="" asp-controller="GameLobby" asp-action="Index">Игроки</a></li>
+                        <li><a asp-area="" asp-controller="Characters" asp-action="Index">Персонажи</a></li>
+                        <li><a asp-area="" asp-controller="Presets" asp-action="Index">Пресеты</a></li>
+                        <li><a asp-area="" asp-controller="Actions" asp-action="Index">Действия</a></li>
+                        <li><a asp-area="" asp-controller="Logs" asp-action="Index">История</a></li>
+                        <li><a asp-area="" asp-controller="Actions" asp-action="Index">Действия</a></li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Games" asp-action="Index">Игры</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">О проекте</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Privacy">Конфиденциальность</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Donate">Поддержать проект</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Контакты</a></li>
-                </ul>
-                <partial name="_LoginPartial" />
-            </div>
-        </div>
-    </nav>
-
-    <partial name="_CookieConsentPartial" />
-
+        </nav>
+    </div>
     <div class="container body-content">
         @RenderBody()
         <hr />
@@ -50,7 +51,6 @@
             <p>&copy; 2019 - Vedma0</p>
         </footer>
     </div>
-
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
@@ -72,6 +72,6 @@
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 
-    @RenderSection("Scripts", required: false)
+    @RenderSection("Scripts", required: false);
 </body>
 </html>

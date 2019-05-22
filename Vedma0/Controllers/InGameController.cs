@@ -43,6 +43,7 @@ namespace Vedma0.Controllers
                 ViewData["IsMaster"] = "true";
                 ViewData["Id"] = game.Id.ToString();
             }
+            
             ViewData["Title"] = game.Name;
             if (character == null)
             {

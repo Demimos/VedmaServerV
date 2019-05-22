@@ -31,15 +31,15 @@ namespace Vedma0.Controllers
         }
 
         // GET: Games/Details/5
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(string id)
         {
-            if (id == null)
+            if (id == null||!Guid.TryParse(id, out Guid gid))
             {
                 return NotFound();
             }
 
             var game = await _context.Games
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id ==gid);
             if (game == null)
             {
                 return NotFound();
@@ -59,7 +59,7 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,OwnerId,IncludeVR,IncludeGeo," +
+        public async Task<IActionResult> Create([Bind("Name,OwnerId,IncludeVR,IncludeGeo," +
             "IncludeGeoFence,IncludeNews,IncludeNewsPublishing,IncludeNewsRate,IncludeNewsComments," +
             "StartTime,EndTime,Active")] Game game)
         {
@@ -76,12 +76,12 @@ namespace Vedma0.Controllers
         // GET: Games/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null)
+            if (id == null || !Guid.TryParse(id, out Guid gid))
             {
                 return NotFound();
             }
 
-            var game = await _context.Games.FindAsync(id);
+            var game = await _context.Games.FindAsync(gid);
             if (game == null)
             {
                 return NotFound();
@@ -126,15 +126,15 @@ namespace Vedma0.Controllers
         }
 
         // GET: Games/Delete/5
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(string id)
         {
-            if (id == null)
+            if (id == null || !Guid.TryParse(id, out Guid gid))
             {
                 return NotFound();
             }
 
             var game = await _context.Games
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == gid);
             if (game == null)
             {
                 return NotFound();
@@ -148,7 +148,9 @@ namespace Vedma0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var game = await _context.Games.FindAsync(id);
+            if (!Guid.TryParse(id, out Guid gid))
+                return BadRequest();
+            var game = await _context.Games.FindAsync(gid);
             _context.Games.Remove(game);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
