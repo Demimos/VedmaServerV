@@ -33,10 +33,12 @@ namespace Vedma0.Controllers
                 return Redirect("~/games");
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var game = await _context.Games.Include(g=>g.GameUsers).AsNoTracking().FirstOrDefaultAsync(g => g.Id == GID);
-           if (!AccessHandle.GameAccessCheck(_context,user, game))
+           if (!AccessHandle.GameAccessCheck(HttpContext,user, game))
                 return Redirect("~/games");
-            user.CurrentGame = GID;
-            await _context.SaveChangesAsync();
+            if (!HttpContext.Request.Cookies.ContainsKey("in_game"))
+            {
+                HttpContext.Response.Cookies.Append("in_game", Id);
+            }
             var character = await _context.Characters.FirstOrDefaultAsync(c => c.UserId == user.Id);
             if (AccessHandle.IsMaster(user, game))
             {

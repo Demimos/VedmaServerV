@@ -33,7 +33,7 @@ namespace Vedma0.Controllers
             var game = await _context.Games.FindAsync(Gid);
             if (game == null)
                 Response.Redirect("~/");
-            if (!AccessHandle.GameMasterCheck(_context, await _userManager.GetUserAsync(HttpContext.User), game))
+            if (!AccessHandle.GameMasterCheck(HttpContext, await _userManager.GetUserAsync(HttpContext.User), game))
                 return View("AccessDenied");
             return View(game);
         }

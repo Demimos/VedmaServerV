@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 using Vedma0.Data;
 using Vedma0.Models;
 using Vedma0.Models.GameEntities;
+using Vedma0.Models.Helper;
 
 namespace Vedma0.Controllers
 {
     public class CharactersController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        UserManager<VedmaUser> _userManager;
+        private readonly UserManager<VedmaUser> _userManager;
         public CharactersController(UserManager<VedmaUser> manager, ApplicationDbContext contex)
         {
             _userManager = manager;
@@ -27,7 +27,14 @@ namespace Vedma0.Controllers
         // GET: Characters
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Characters.Include(c => c.Game).Include(c => c.User);
+            if (!HttpContext.Request.Cookies.ContainsKey("in_Game"))
+                return Redirect("~/");
+            if (!Guid.TryParse(HttpContext.Request.Cookies["in_Game"], out Guid Gid))
+                return Redirect("~/");
+            var game = await _context.Games.AsNoTracking().Include(g => g.GameUsers).FirstOrDefaultAsync();
+            if (AccessHandle.GameMasterCheck(HttpContext, await _userManager.GetUserAsync(HttpContext.User), game))
+                return View("AccessDenied");
+            var applicationDbContext = _context.Characters.AsNoTracking().Include(c => c.User).Where(c=>c.GameId==Gid);
             return View(await applicationDbContext.ToListAsync());
         }
 
