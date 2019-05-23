@@ -18,6 +18,11 @@ namespace Vedma0.Data
         {
             Database.EnsureCreated();
         }
+
+        public ApplicationDbContext()
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

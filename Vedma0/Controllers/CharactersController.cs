@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,8 @@ using Vedma0.Models.Helper;
 
 namespace Vedma0.Controllers
 {
+    [Authorize]
+    [AccessRule(AccessLevel.Developer)]
     public class CharactersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -36,12 +39,13 @@ namespace Vedma0.Controllers
             return game;
         }
         // GET: Characters
+      
         public async Task<IActionResult> Index()
         {
-            Game game = await CheckAuth();
-            if ( game== null)
-                return View("AccessDenied");
-            var applicationDbContext = _context.Characters.AsNoTracking().Include(c => c.User).Where(c=>c.GameId==game.Id);
+            //Game game = await CheckAuth();
+            //if ( game== null)
+            //    return View("AccessDenied");
+            var applicationDbContext = _context.Characters.AsNoTracking().Include(c => c.User);/*.Where(c=>c.GameId==game.Id);*/
             return View(await applicationDbContext.ToListAsync());
         }
 
