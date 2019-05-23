@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,33 +24,41 @@ namespace Vedma0.Controllers
             _context = contex;
 
         }
-
+        private async Task<Game> CheckAuth()
+        {
+            if (!HttpContext.Request.Cookies.ContainsKey("in_Game"))
+                return null;
+            if (!Guid.TryParse(HttpContext.Request.Cookies["in_Game"], out Guid Gid))
+                return null;
+            Game game = await _context.Games.AsNoTracking().Include(g => g.GameUsers).FirstOrDefaultAsync();
+            if (!AccessHandle.GameMasterCheck(HttpContext, await _userManager.GetUserAsync(HttpContext.User), game))
+                return null;
+            return game;
+        }
         // GET: Characters
         public async Task<IActionResult> Index()
         {
-            if (!HttpContext.Request.Cookies.ContainsKey("in_Game"))
-                return Redirect("~/");
-            if (!Guid.TryParse(HttpContext.Request.Cookies["in_Game"], out Guid Gid))
-                return Redirect("~/");
-            var game = await _context.Games.AsNoTracking().Include(g => g.GameUsers).FirstOrDefaultAsync();
-            if (AccessHandle.GameMasterCheck(HttpContext, await _userManager.GetUserAsync(HttpContext.User), game))
+            Game game = await CheckAuth();
+            if ( game== null)
                 return View("AccessDenied");
-            var applicationDbContext = _context.Characters.AsNoTracking().Include(c => c.User).Where(c=>c.GameId==Gid);
+            var applicationDbContext = _context.Characters.AsNoTracking().Include(c => c.User).Where(c=>c.GameId==game.Id);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Characters/Details/5
         public async Task<IActionResult> Details(long? id)
         {
+            Game game = await CheckAuth();
+            if (game == null)
+                return View("AccessDenied");
             if (id == null)
             {
                 return NotFound();
             }
 
             var character = await _context.Characters
-                .Include(c => c.Game)
                 .Include(c => c.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id && game.Id==m.GameId);
             if (character == null)
             {
                 return NotFound();
@@ -59,9 +68,11 @@ namespace Vedma0.Controllers
         }
 
         // GET: Characters/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name");
+            Game game = await CheckAuth();
+            if (game == null)
+                return View("AccessDenied");
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
@@ -71,15 +82,18 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Active,HasSuspendedSignal,InActiveMessage,Id,Name,GameId")] Character character)
+        public async Task<IActionResult> Create([Bind("Active,HasSuspendedSignal,InActiveMessage,Name,UserId")] Character character)
         {
+            Game game = await CheckAuth();
+            if (game == null)
+                return View("AccessDenied");
             if (ModelState.IsValid)
             {
+                character.GameId = game.Id;
                 _context.Add(character);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", character.GameId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", character.UserId);
             return View(character);
         }
@@ -87,6 +101,9 @@ namespace Vedma0.Controllers
         // GET: Characters/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
+            Game game = await CheckAuth();
+            if (game == null)
+                return View("AccessDenied");
             if (id == null)
             {
                 return NotFound();
@@ -97,7 +114,6 @@ namespace Vedma0.Controllers
             {
                 return NotFound();
             }
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", character.GameId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", character.UserId);
             return View(character);
         }
@@ -107,9 +123,12 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("UserId,Active,HasSuspendedSignal,InActiveMessage,Id,Name,GameId")] Character character)
+        public async Task<IActionResult> Edit(long id, [Bind("UserId,Active,HasSuspendedSignal,InActiveMessage,Id,Name")] Character character)
         {
-            if (id != character.Id)
+            Game game = await CheckAuth();
+            if (game == null)
+                return View("AccessDenied");
+            if (id != character.Id || !CharacterExists(id, game))
             {
                 return NotFound();
             }
@@ -118,6 +137,7 @@ namespace Vedma0.Controllers
             {
                 try
                 {
+                    character.GameId = game.Id;
                     _context.Update(character);
                     await _context.SaveChangesAsync();
                 }
@@ -134,7 +154,6 @@ namespace Vedma0.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", character.GameId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", character.UserId);
             return View(character);
         }
@@ -142,13 +161,15 @@ namespace Vedma0.Controllers
         // GET: Characters/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
+            Game game = await CheckAuth();
+            if (game == null)
+                return View("AccessDenied");
             if (id == null)
             {
                 return NotFound();
             }
 
             var character = await _context.Characters
-                .Include(c => c.Game)
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (character == null)
@@ -164,7 +185,10 @@ namespace Vedma0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var character = await _context.Characters.FindAsync(id);
+            Game game = await CheckAuth();
+            if (game == null)
+                return View("AccessDenied");
+            var character = await _context.Characters.FirstOrDefaultAsync(c=>c.Id==id && game.Id==c.GameId);
             _context.Characters.Remove(character);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -173,6 +197,10 @@ namespace Vedma0.Controllers
         private bool CharacterExists(long id)
         {
             return _context.Characters.Any(e => e.Id == id);
+        }
+        private bool CharacterExists(long id, Game game)
+        {
+            return _context.Characters.Any(e => e.Id == id && e.GameId==game.Id);
         }
     }
 }
