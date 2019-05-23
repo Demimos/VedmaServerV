@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,30 +13,41 @@ using Vedma0.Models.Helper;
 
 namespace Vedma0.Controllers
 {
-    [Authorize]
+    [AccessRule(AccessLevel.Developer)]
     public class ConsoleController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<VedmaUser> _userManager;
-        public ConsoleController(UserManager<VedmaUser> manager, ApplicationDbContext contex)
-        {
-            _userManager = manager;
-            _context = contex;
 
+        public ConsoleController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+        /// <summary>
+        /// Id игры
+        /// </summary>
+        private Guid GetGid()
+        {
+            var GameId = Request.Cookies["in_game"];
+            return Guid.Parse(GameId);
+        }
+        /// <summary>
+        /// Возвращает текущую игру
+        /// </summary>
+        private async Task<Game> GetGameAsync()
+        {
+            return await _context.Games.FindAsync(GetGid());
+        }
+        /// <summary>
+        /// Id пользователя
+        /// </summary>
+        private string GetUid()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier).Value;
         }
         // GET: Console
-        public async Task<ActionResult> Index(string Id)
+        public async Task<ActionResult> Index()
         {
-            if (Id==null)
-                return NotFound();
-            if (!Guid.TryParse(Id, out Guid Gid))
-                return BadRequest();
-            var game = await _context.Games.FindAsync(Gid);
-            if (game == null)
-                Response.Redirect("~/");
-            if (!AccessHandle.GameMasterCheck(HttpContext, await _userManager.GetUserAsync(HttpContext.User), game))
-                return View("AccessDenied");
-            return View(game);
+            return View(await GetGameAsync());
         }
 
         // GET: Console/Details/5

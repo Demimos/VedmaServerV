@@ -156,9 +156,23 @@ namespace Vedma0.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public RedirectToActionResult Enter(string Id)
+        {
+            if (Id == null||!Guid.TryParse(Id, out Guid gid))
+            {
+                return RedirectToAction("Index");
+            }
+            var cookies = HttpContext.Request.Cookies;
+            if (cookies.ContainsKey("in_Game"))
+                HttpContext.Response.Cookies.Delete("in_Game");
+            HttpContext.Response.Cookies.Append("in_Game", gid.ToString());
+            return RedirectToAction("Index", "InGame", null);
+        }
+
         private bool GameExists(Guid id)
         {
             return _context.Games.Any(e => e.Id == id);
         }
+
     }
 }

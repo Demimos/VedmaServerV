@@ -16,8 +16,8 @@ namespace Vedma0.Models.Helper
     {
         private readonly AccessLevel _accessLevel;
         public ApplicationDbContext Db { get; private set; }
-        public Game Game { get; set; }
-        
+        public Game CurrentGame { get; private set; }
+        public string Uid { get; private set; }
         public AccessRule(AccessLevel accessLevel=AccessLevel.Player)
         {
             _accessLevel = accessLevel;
@@ -44,20 +44,20 @@ namespace Vedma0.Models.Helper
                 HandleWrongNumber(context);
             }
             Db = (ApplicationDbContext)context.HttpContext.RequestServices.GetService(typeof(ApplicationDbContext));
-            Game = Db.Games.Include(g=>g.GameUsers).FirstOrDefault(g => g.Id == gid);
-            var uid = context.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            CurrentGame = Db.Games.AsNoTracking().Include(g=>g.GameUsers).FirstOrDefault(g => g.Id == gid);
+            Uid = context.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             switch (_accessLevel)
             {
                 case AccessLevel.Player:
-                    if (!Game.GameUsers.Select(g => g.VedmaUserId).Contains(uid))
+                    if (!CurrentGame.GameUsers.Select(g => g.VedmaUserId).Contains(Uid) && CurrentGame.OwnerId != Uid)
                         HandleWrongNumber(context);
                         break;
                 case AccessLevel.Developer:
-                    if (!(Game.MasterIds.Contains(uid)||Game.OwnerId==uid))
+                    if (!CurrentGame.MasterIds.Contains(Uid) && CurrentGame.OwnerId != Uid)
                         HandleWrongNumber(context);
                     break;
             }
-               
+
         }
 
         private void HandleNoAuth(ActionExecutingContext context)

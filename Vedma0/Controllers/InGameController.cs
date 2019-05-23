@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,37 +16,49 @@ using Vedma0.Models.ViewModels;
 
 namespace Vedma0.Controllers
 {
-    [Authorize]
+    [AccessRule(AccessLevel.Player)]
     public class InGameController : Controller
     {
-        UserManager<VedmaUser> _userManager;
-        public InGameController(UserManager<VedmaUser> manager, ApplicationDbContext contex)
-        {
-            _userManager = manager;
-            _context = contex;
-
-        }
         private readonly ApplicationDbContext _context;
+
+        public InGameController(ApplicationDbContext context)
+        {  
+            _context = context;
+        }
+        /// <summary>
+        /// Id игры
+        /// </summary>
+        private Guid GetGid()
+        {
+            var GameId = Request.Cookies["in_game"];
+            return Guid.Parse(GameId);
+        }
+        /// <summary>
+        /// Возвращает текущую игру
+        /// </summary>
+        private async Task<Game> GetGameAsync()
+        {
+            return await _context.Games.FindAsync(GetGid());
+        }
+        /// <summary>
+        /// Id пользователя
+        /// </summary>
+        private string GetUid()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        }
+        
         // GET: InGame
         public async Task<ActionResult> Index(string Id)
         {
-            if(!Guid.TryParse(Id,out Guid GID))
-                return Redirect("~/games");
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var game = await _context.Games.Include(g=>g.GameUsers).AsNoTracking().FirstOrDefaultAsync(g => g.Id == GID);
-           if (!AccessHandle.GameAccessCheck(HttpContext,user, game))
-                return Redirect("~/games");
-            if (!HttpContext.Request.Cookies.ContainsKey("in_game"))
-            {
-                HttpContext.Response.Cookies.Append("in_game", Id);
-            }
-            var character = await _context.Characters.FirstOrDefaultAsync(c => c.UserId == user.Id);
-            if (AccessHandle.IsMaster(user, game))
+            var uid = GetUid();
+            var game = await GetGameAsync();
+            var character = await _context.Characters.FirstOrDefaultAsync(c => c.UserId == uid && c.GameId== game.Id);
+            if (AccessHandle.IsMaster(uid, game))
             {
                 ViewData["IsMaster"] = "true";
-                ViewData["Id"] = game.Id.ToString();
+                ViewData["Id"] = game.Id;
             }
-            
             ViewData["Title"] = game.Name;
             if (character == null)
             {
@@ -129,5 +142,6 @@ namespace Vedma0.Controllers
                 return View();
             }
         }
+       
     }
 }
