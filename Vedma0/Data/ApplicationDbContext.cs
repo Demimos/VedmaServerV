@@ -57,6 +57,20 @@ namespace Vedma0.Data
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<GameEntity>()
+              .HasOne(sc => sc.Game)
+              .WithMany(c=>c.GameEntities)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Preset>()
+             .HasOne(sc => sc.Game)
+             .WithMany(c => c.Presets)
+             .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<BaseProperty>()
+             .HasOne(sc => sc.Game)
+             .WithMany(c => c.BaseProperties)
+             .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<DiaryPage>()
                .HasOne(sc => sc.Character)
                .WithMany(c => c.Diary)
