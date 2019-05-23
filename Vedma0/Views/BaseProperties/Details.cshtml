@@ -1,0 +1,55 @@
+﻿@model Vedma0.Models.Properties.BaseProperty
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Console.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>BaseProperty</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Game)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Game.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Preset)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Preset.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SortValue)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SortValue)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Visible)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Visible)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
