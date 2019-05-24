@@ -18,6 +18,8 @@ namespace Vedma0.Models.GameEntities
         [Required]
         public Guid GameId { get; set; }
         public Game Game { get; set; }
+        public string Tag { get; set; }
+        public string QRTag { get; set; }
 
         public IList<EntityPreset> EntityPresets { get; set; }
         public IList<EntityProperty> Properties { get; set; }

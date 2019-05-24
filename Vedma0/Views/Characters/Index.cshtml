@@ -21,6 +21,9 @@
                 @Html.DisplayNameFor(model => model.User)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Active)
             </th>
             <th>
@@ -29,20 +32,36 @@
             <th>
                 @Html.DisplayNameFor(model => model.InActiveMessage)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Game)
-            </th>
+
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            @if (item.User != null)
+            {
             <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
+                <span>
+                    @Html.DisplayFor(model => item.User.UserName)
+                </span>
+                <span>
+                    @Html.DisplayFor(model => item.User.Email)
+                </span>
+                <span>
+                    @Html.DisplayFor(model => item.User.PhoneNumber)
+                </span>  
+            </td>
+              
+            }
+            else
+            {
+             <td>
+                @Html.Display("игрок не присвоен")
+             </td>
+            }
+            <td>
+                @Html.DisplayNameFor(model => item.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Active)
@@ -52,12 +71,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.InActiveMessage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Game.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

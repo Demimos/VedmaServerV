@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,14 +11,20 @@ namespace Vedma0.Models.GameEntities
     public class Character:GameEntity
     {
         public string UserId { get; set; }
-        public virtual VedmaUser User { get; set; }
+        [DisplayName("Пользователь")]
+        public VedmaUser User { get; set; }
         [Required]
-        public bool Active { get; set; }
+        [DisplayName("Активен")]
+        public bool Active { get; set; } = false;
         [Required]
-        public bool HasSuspendedSignal { get; set; }
-        public string InActiveMessage { get; set; }
-        public IList<DiaryPage> Diary { get; set; }
+        [DisplayName("Неполученные сообщения")]
+        public bool HasSuspendedSignal { get; set; } = false;
+        [DisplayName("Сообщение при неактивности")]
+        public string InActiveMessage { get; set; } = "Ваш персонаж ещё не закончен";
+       
 
+        public IList<DiaryPage> Diary { get; set; }
+        
 
 
         public Character()
