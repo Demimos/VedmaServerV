@@ -17,44 +17,18 @@ using Vedma0.Models.ViewModels;
 namespace Vedma0.Controllers
 {
     [AccessRule(AccessLevel.Player)]
-    public class InGameController : Controller
+    public class InGameController : VedmaController
     {
-        private readonly ApplicationDbContext _context;
-
-        public InGameController(ApplicationDbContext context)
+        public InGameController(ApplicationDbContext context):base(context)
         {  
-            _context = context;
         }
-        /// <summary>
-        /// Id игры
-        /// </summary>
-        private Guid GetGid()
-        {
-            var GameId = Request.Cookies["in_game"];
-            return Guid.Parse(GameId);
-        }
-        /// <summary>
-        /// Возвращает текущую игру
-        /// </summary>
-        private async Task<Game> GetGameAsync()
-        {
-            return await _context.Games.FindAsync(GetGid());
-        }
-        /// <summary>
-        /// Id пользователя
-        /// </summary>
-        private string GetUid()
-        {
-            return User.FindFirst(ClaimTypes.NameIdentifier).Value;
-        }
-        
         // GET: InGame
         public async Task<ActionResult> Index(string Id)
         {
-            var uid = GetUid();
-            var game = await GetGameAsync();
+            var uid = UserId();
+            var game = await GameAsync();
             var character = await _context.Characters.FirstOrDefaultAsync(c => c.UserId == uid && c.GameId== game.Id);
-            if (AccessHandle.IsMaster(uid, game))
+            if (IsMaster(game))
             {
                 ViewData["IsMaster"] = "true";
                 ViewData["Id"] = game.Id;

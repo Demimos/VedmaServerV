@@ -14,40 +14,16 @@ using Vedma0.Models.Helper;
 namespace Vedma0.Controllers
 {
     [AccessRule(AccessLevel.Developer)]
-    public class ConsoleController : Controller
+    public class ConsoleController : VedmaController
     {
-        private readonly ApplicationDbContext _context;
-
-        public ConsoleController(ApplicationDbContext context)
+        public ConsoleController(ApplicationDbContext context):base(context)
         {
-            _context = context;
         }
-        /// <summary>
-        /// Id игры
-        /// </summary>
-        private Guid GetGid()
-        {
-            var GameId = Request.Cookies["in_game"];
-            return Guid.Parse(GameId);
-        }
-        /// <summary>
-        /// Возвращает текущую игру
-        /// </summary>
-        private async Task<Game> GetGameAsync()
-        {
-            return await _context.Games.FindAsync(GetGid());
-        }
-        /// <summary>
-        /// Id пользователя
-        /// </summary>
-        private string GetUid()
-        {
-            return User.FindFirst(ClaimTypes.NameIdentifier).Value;
-        }
+       
         // GET: Console
         public async Task<ActionResult> Index()
         {
-            return View(await GetGameAsync());
+            return View(await GameAsync());
         }
 
         // GET: Console/Details/5

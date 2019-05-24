@@ -8,43 +8,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Vedma0.Data;
 using Vedma0.Models;
+using Vedma0.Models.Helper;
 
 namespace Vedma0.Controllers
 {
-    public class PresetsController : Controller
+    [AccessRule(AccessLevel.Developer)]
+    public class PresetsController : VedmaController
     {
-        private readonly ApplicationDbContext _context;
 
-        public PresetsController(ApplicationDbContext context)
+        public PresetsController(ApplicationDbContext context):base(context)
         {
-            _context = context;
         }
-        /// <summary>
-        /// Id игры
-        /// </summary>
-        private Guid GetGid()
-        {
-            var GameId = Request.Cookies["in_game"];
-            return Guid.Parse(GameId);
-        }
-        /// <summary>
-        /// Возвращает текущую игру
-        /// </summary>
-        private async Task<Game> GetGameAsync()
-        {
-            return await _context.Games.FindAsync(GetGid());
-        }
-        /// <summary>
-        /// Id пользователя
-        /// </summary>
-        private string GetUid()
-        {
-            return User.FindFirst(ClaimTypes.NameIdentifier).Value;
-        }
+       
         // GET: Presets
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Presets.Include(p => p.Game);
+            var gid = (Guid)GameId();
+            var applicationDbContext = _context.Presets.AsNoTracking().Where(p=>p.GameId==gid);
             return View(await applicationDbContext.ToListAsync());
         }
 

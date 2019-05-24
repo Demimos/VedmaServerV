@@ -6,17 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Vedma0.Data;
+using Vedma0.Models.Helper;
 using Vedma0.Models.Properties;
 
 namespace Vedma0.Controllers
 {
-    public class BasePropertiesController : Controller
+    [AccessRule(AccessLevel.Developer)]
+    public class BasePropertiesController : VedmaController
     {
-        private readonly ApplicationDbContext _context;
 
-        public BasePropertiesController(ApplicationDbContext context)
+        public BasePropertiesController(ApplicationDbContext context):base(context)
         {
-            _context = context;
         }
 
         // GET: BaseProperties

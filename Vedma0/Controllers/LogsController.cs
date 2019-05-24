@@ -6,17 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Vedma0.Data;
+using Vedma0.Models.Helper;
 using Vedma0.Models.Logging;
 
 namespace Vedma0.Controllers
 {
-    public class LogsController : Controller
+    [AccessRule(AccessLevel.Developer)]
+    public class LogsController : VedmaController
     {
-        private readonly ApplicationDbContext _context;
-
-        public LogsController(ApplicationDbContext context)
+        public LogsController(ApplicationDbContext context):base(context)
         {
-            _context = context;
         }
 
         // GET: Logs

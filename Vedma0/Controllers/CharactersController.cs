@@ -17,41 +17,18 @@ using Vedma0.Models.Helper;
 namespace Vedma0.Controllers
 {
     [AccessRule(AccessLevel.Developer)]
-    public class CharactersController : Controller
+    public class CharactersController : VedmaController
     {
-        private readonly ApplicationDbContext _context;
+        public CharactersController(ApplicationDbContext context):base(context)
+        {
+        }
 
-        public CharactersController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-        /// <summary>
-        /// Id игры
-        /// </summary>
-        private Guid GetGid()
-        {
-            var GameId = Request.Cookies["in_game"];
-            return Guid.Parse(GameId);
-        }
-        /// <summary>
-        /// Возвращает текущую игру
-        /// </summary>
-        private async Task<Game> GetGameAsync()
-        {
-            return await _context.Games.FindAsync(GetGid());
-        }
-        /// <summary>
-        /// Id пользователя
-        /// </summary>
-        private string GetUid()
-        {
-            return User.FindFirst(ClaimTypes.NameIdentifier).Value;
-        }
+
         // GET: Characters
 
         public async Task<IActionResult> Index()
         {
-            var gid = GetGid();
+            var gid = GameId();
             var applicationDbContext = _context.Characters.AsNoTracking().Include(c => c.User).Where(c=>c.GameId==gid);
             return View(await applicationDbContext.ToListAsync());
         }
@@ -63,7 +40,7 @@ namespace Vedma0.Controllers
             {
                 return NotFound();
             }
-            var game = await GetGameAsync();
+            var game = await GameAsync();
             var character = await _context.Characters
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(m => m.Id == id && game.Id==m.GameId);
@@ -91,7 +68,7 @@ namespace Vedma0.Controllers
         {
             if (ModelState.IsValid)
             {
-                character.GameId = GetGid(); ;
+                character.GameId = (Guid)GameId();
                 _context.Add(character);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -107,7 +84,7 @@ namespace Vedma0.Controllers
             {
                 return NotFound();
             }
-            var gid = GetGid();
+            var gid = (Guid)GameId();
             var character = await _context.Characters.FirstOrDefaultAsync(c=>c.Id==id && c.GameId==gid);
             if (character == null)
             {
@@ -124,7 +101,7 @@ namespace Vedma0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("UserId,Active,HasSuspendedSignal,InActiveMessage,Id,Name")] Character character)
         {
-            var gid = GetGid();
+            var gid = (Guid)GameId();
             if (id != character.Id || !CharacterExists(id, gid))
             {
                 return NotFound();
@@ -162,7 +139,7 @@ namespace Vedma0.Controllers
             {
                 return NotFound();
             }
-            var gid = GetGid();
+            Guid gid = (Guid)GameId();
             var character = await _context.Characters
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(m => m.Id == id && m.GameId==gid);
@@ -178,7 +155,7 @@ namespace Vedma0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var gid = GetGid();
+            var gid = (Guid)GameId();
             var character = await _context.Characters.FirstOrDefaultAsync(c=>c.Id==id && gid==c.GameId);
             if (character == null)
                 return NotFound();

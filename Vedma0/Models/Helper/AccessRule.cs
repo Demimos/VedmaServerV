@@ -1,18 +1,21 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Vedma0.Controllers;
 using Vedma0.Data;
 
 namespace Vedma0.Models.Helper
 {
 
-    [AttributeUsage(AttributeTargets.Class)]
-    public class AccessRule : Attribute, IActionFilter
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true)]
+    public sealed class AccessRule : Attribute, IActionFilter
     {
         private readonly AccessLevel _accessLevel;
         public ApplicationDbContext Db { get; private set; }
@@ -33,10 +36,11 @@ namespace Vedma0.Models.Helper
             if (!context.HttpContext.User.Identity.IsAuthenticated)
             {
                 HandleNoAuth(context);
+                return;
             }
             if (!context.HttpContext.Request.Cookies.ContainsKey("in_Game"))
             {
-                HandleNoCookies(context);
+                RedirectHome(context); 
             }
             var Id = context.HttpContext.Request.Cookies["in_Game"];
             if (!Guid.TryParse(Id, out Guid gid))
@@ -54,32 +58,35 @@ namespace Vedma0.Models.Helper
                         break;
                 case AccessLevel.Developer:
                     if (!CurrentGame.MasterIds.Contains(Uid) && CurrentGame.OwnerId != Uid)
-                        HandleWrongNumber(context);
+                        RedirectHome(context);  //TODO customize
                     break;
             }
 
         }
+       
 
         private void HandleNoAuth(ActionExecutingContext context)
         {
-            throw new NotImplementedException();//TODO HandleNoAuth
+            var controller = (Controller)context.Controller;
+            context.Result = new RedirectToRouteResult(
+                new RouteValueDictionary(new {  controller = "Identity/Account", action = "Login" })
+            );
+            context.Result.ExecuteResultAsync(controller.ControllerContext);
         }
 
         private void HandleWrongNumber(ActionExecutingContext context)
         {
-            switch (_accessLevel)
-            {
-                case AccessLevel.Player:
-                    throw new NotImplementedException();//TODO HandleNoAuth
-                case AccessLevel.Developer:
-                    throw new NotImplementedException();//TODO HandleNoAuth
-            }
-        
+            context.HttpContext.Response.Cookies.Delete("in_game");
+            RedirectHome(context);           
         }
 
-        private void HandleNoCookies(ActionExecutingContext context)
+        private void RedirectHome(ActionExecutingContext context)
         {
-            throw new NotImplementedException();//TODO HandleNoCookies
+            var controller = (Controller)context.Controller;
+            context.Result = new RedirectToRouteResult(
+                      new RouteValueDictionary(new { controller = "Games", action = "Index" }) 
+                  );
+            context.Result.ExecuteResultAsync(controller.ControllerContext);
         }
     }
     public enum AccessLevel
