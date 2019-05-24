@@ -13,6 +13,7 @@ using Vedma0.Data;
 using Vedma0.Models;
 using Vedma0.Models.GameEntities;
 using Vedma0.Models.Helper;
+using Vedma0.Models.ViewModels;
 
 namespace Vedma0.Controllers
 {
@@ -55,7 +56,9 @@ namespace Vedma0.Controllers
         // GET: Characters/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            var userList = new List<Selectable>() { new Selectable(null, "") };
+            userList.AddRange(_context.Users.Select(u => new Selectable(u.Id, u.UserName)));
+            ViewData["UserId"] = new SelectList(userList, "Id", "Name", userList.First().Id);
             return View();
         }
 
@@ -73,7 +76,9 @@ namespace Vedma0.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", character.UserId);
+            var userList = new List<Selectable>() { new Selectable { Id = null, Name = "" } };
+            userList.AddRange(_context.Users.Select(u => new Selectable(u.Id, u.UserName)));
+            ViewData["UserId"] = new SelectList(userList, "Id", "Name", character.UserId);
             return View(character);
         }
 
@@ -90,7 +95,9 @@ namespace Vedma0.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", character.UserId);
+            var userList = new List<Selectable>() { new Selectable { Id=null, Name="" } };
+            userList.AddRange(_context.Users.Select(u => new Selectable(u.Id, u.UserName)));
+            ViewData["UserId"] = new SelectList(userList, "Id", "Name", character.UserId);
             return View(character);
         }
 
@@ -128,7 +135,7 @@ namespace Vedma0.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", character.UserId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Name", character.UserId);
             return View(character);
         }
 
