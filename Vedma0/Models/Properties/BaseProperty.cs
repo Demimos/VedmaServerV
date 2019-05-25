@@ -36,6 +36,8 @@ namespace Vedma0.Models.Properties
             return Name;
         }
 
+        public abstract string GetPropertyType();
+
         public abstract string GetValue();
     }
 }

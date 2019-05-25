@@ -9,5 +9,7 @@ namespace Vedma0.Models.Properties
     {
         string GetName();
         string GetValue();
+
+        string GetPropertyType();
     }
 }

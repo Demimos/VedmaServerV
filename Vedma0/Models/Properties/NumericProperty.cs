@@ -20,6 +20,10 @@ namespace Vedma0.Models.Properties
             return Value.ToString("F", CultureInfo.InvariantCulture);
         }
 
+        public override string GetPropertyType()
+        {
+            return "Числовое свойство";
+        }
 
         public NumericProperty() : base()
         {

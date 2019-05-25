@@ -35,10 +35,11 @@ namespace Vedma0.Controllers
             {
                 return NotFound();
             }
-
+            var gid = (Guid)GameId();
             var preset = await _context.Presets
-                .Include(p => p.Game)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .AsNoTracking()
+                .Include(m=>m.BaseProperties)
+                .FirstOrDefaultAsync(m => m.Id == id&&m.GameId==gid);
             if (preset == null)
             {
                 return NotFound();
@@ -50,7 +51,6 @@ namespace Vedma0.Controllers
         // GET: Presets/Create
         public IActionResult Create()
         {
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name");
             return View();
         }
 
@@ -59,15 +59,16 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,GameId,SortValue,_Abilities,Name,Title,Description,SelfInsight")] Preset preset)
+        public async Task<IActionResult> Create([Bind("Id,SortValue,_Abilities,Name,Title,Description,SelfInsight")] Preset preset)
         {
             if (ModelState.IsValid)
             {
+                preset.GameId = (Guid)GameId();
                 _context.Add(preset);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", preset.GameId);
+           
             return View(preset);
         }
 
@@ -78,13 +79,15 @@ namespace Vedma0.Controllers
             {
                 return NotFound();
             }
-
-            var preset = await _context.Presets.FindAsync(id);
+          
+            var preset = await _context.Presets
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p=>p.Id==id && p.GameId==(Guid)GameId());
             if (preset == null)
             {
                 return NotFound();
             }
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", preset.GameId);
+           
             return View(preset);
         }
 
@@ -95,7 +98,7 @@ namespace Vedma0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,GameId,SortValue,_Abilities,Name,Title,Description,SelfInsight")] Preset preset)
         {
-            if (id != preset.Id)
+            if (id != preset.Id || preset.GameId!=GameId())
             {
                 return NotFound();
             }
@@ -120,7 +123,7 @@ namespace Vedma0.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", preset.GameId);
+           
             return View(preset);
         }
 
@@ -133,8 +136,8 @@ namespace Vedma0.Controllers
             }
 
             var preset = await _context.Presets
-                .Include(p => p.Game)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id && m.GameId == GameId());
             if (preset == null)
             {
                 return NotFound();
@@ -148,7 +151,11 @@ namespace Vedma0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var preset = await _context.Presets.FindAsync(id);
+            var preset = await _context.Presets.FirstOrDefaultAsync(p => p.Id == id && p.GameId == GameId());
+            if (preset==null)
+            {
+                return NotFound();
+            }
             _context.Presets.Remove(preset);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

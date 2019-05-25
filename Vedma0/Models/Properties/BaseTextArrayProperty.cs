@@ -34,5 +34,10 @@ namespace Vedma0.Models.Properties
             }
             return result;
         }
+
+        public override string GetPropertyType()
+        {
+            return "Свойство массивом строк";
+        }
     }
 }

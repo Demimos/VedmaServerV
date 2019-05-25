@@ -36,6 +36,9 @@ namespace Vedma0.Models.Properties
             PresetId = bp.PresetId;
             SortValue = bp.SortValue;
         }
-
+        public override string GetPropertyType()
+        {
+            return "Текстовое свойство";
+        }
     }
 }
