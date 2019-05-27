@@ -13,14 +13,14 @@ namespace Vedma0.Models.Properties
         [DisplayName("Значение по умолчанию")]
         public string DefaultValue { get; set; }
 
-        public override string GetPropertyType()
+        public override string GetPropertyType
         {
-            return "Текстовое свойство";
+            get=> "Текстовое свойство";
         }
 
-        public override string GetValue()
+        public override string GetValue
         {
-            return DefaultValue;
+            get => DefaultValue;
         }
     }
 }

@@ -5,30 +5,17 @@
     Layout = "~/Views/Shared/_Console.cshtml";
 }
 
-<h2>Edit</h2>
+<h2>Изменение</h2>
 
-<h4>Preset</h4>
+<h4>Пресет</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="GameId" class="control-label"></label>
-                <select asp-for="GameId" class="form-control" asp-items="ViewBag.GameId"></select>
-                <span asp-validation-for="GameId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SortValue" class="control-label"></label>
-                <input asp-for="SortValue" class="form-control" />
-                <span asp-validation-for="SortValue" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="_Abilities" class="control-label"></label>
-                <input asp-for="_Abilities" class="form-control" />
-                <span asp-validation-for="_Abilities" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="GameId" />
+            <input type="hidden" asp-for="_Abilities" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -45,6 +32,11 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="SortValue" class="control-label"></label>
+                <input asp-for="SortValue" class="form-control" />
+                <span asp-validation-for="SortValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <div class="checkbox">
                     <label>
                         <input asp-for="SelfInsight" /> @Html.DisplayNameFor(model => model.SelfInsight)
@@ -52,14 +44,14 @@
                 </div>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Сохранить" class="btn btn-default" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Назад к списку</a>
 </div>
 
 @section Scripts {

@@ -10,7 +10,7 @@ namespace Vedma0.Models.ViewModels
     {
         public string Title { get; set; }
         public IList<PropertyView> PropertyViews { get; set; }
-        public int SortValue { get; set; }
+        public long SortValue { get; set; }
 
         public PropertyPageView(Preset preset)
         {

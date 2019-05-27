@@ -7,9 +7,9 @@ namespace Vedma0.Models.Properties
 {
     interface IProperty
     {
-        string GetName();
-        string GetValue();
+        string GetName { get; }
+        string GetValue { get; }
 
-        string GetPropertyType();
+        string GetPropertyType { get; }
     }
 }

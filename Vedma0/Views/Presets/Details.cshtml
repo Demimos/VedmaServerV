@@ -12,24 +12,6 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Game)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Game.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.SortValue)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.SortValue)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model._Abilities)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model._Abilities)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.Name)
         </dt>
         <dd>
@@ -48,6 +30,18 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.SortValue)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SortValue)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model._Abilities)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model._Abilities)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.SelfInsight)
         </dt>
         <dd>
@@ -56,6 +50,63 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Изменить</a> |
+    <a asp-action="Index">Назад к списку</a>
 </div>
+<hr/>
+<h2>Базовые свойства</h2>
+<p>
+    <a asp-controller="BaseProperties" asp-action="CreateText" asp-route-id="@Model.Id">Создать текстовое свойство</a>
+</p>
+@if (Model.BaseProperties.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.Label("Название")
+                </th>
+                <th>
+                    @Html.Label("Значение")
+                </th>
+                <th>
+                    @Html.Label("Описание")
+                </th>
+                <th>
+                    @Html.Label("Тип свойства")
+                </th>
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.BaseProperties)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GetName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GetValue)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GetPropertyType)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-controller="BaseProperties" asp-route-id="@item.Id">Изменить</a> |
+                        <a asp-action="Details" asp-controller="BaseProperties" asp-route-id="@item.Id">Детали</a> |
+                        <a asp-action="Delete" asp-controller="BaseProperties" asp-route-id="@item.Id">Удалить</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else
+{
+    <h3>Нет свойств</h3>
+}
+
+

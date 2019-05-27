@@ -59,12 +59,15 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SortValue,_Abilities,Name,Title,Description,SelfInsight")] Preset preset)
+        public async Task<IActionResult> Create([Bind("Name,Title,Description,SelfInsight")] Preset preset)
         {
             if (ModelState.IsValid)
             {
                 preset.GameId = (Guid)GameId();
+               
                 _context.Add(preset);
+                await _context.SaveChangesAsync();
+                preset.SortValue = preset.Id;
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

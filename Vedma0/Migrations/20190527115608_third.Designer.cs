@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vedma0.Data;
 
 namespace Vedma0.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190527115608_third")]
+    partial class third
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -327,7 +329,7 @@ namespace Vedma0.Migrations
 
                     b.Property<long?>("PresetId");
 
-                    b.Property<long>("SortValue");
+                    b.Property<int>("SortValue");
 
                     b.Property<bool>("Visible");
 
@@ -364,7 +366,7 @@ namespace Vedma0.Migrations
 
                     b.Property<long?>("PresetId");
 
-                    b.Property<long>("SortValue");
+                    b.Property<int>("SortValue");
 
                     b.Property<bool>("Visible");
 

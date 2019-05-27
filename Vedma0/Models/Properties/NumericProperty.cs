@@ -15,14 +15,14 @@ namespace Vedma0.Models.Properties
         [DisplayName("Значение")]
         public double Value { get; set; }
 
-        public override string GetValue()
+        public override string GetValue
         {
-            return Value.ToString("F", CultureInfo.InvariantCulture);
+            get=> Value.ToString("F", CultureInfo.InvariantCulture);
         }
 
-        public override string GetPropertyType()
+        public override string GetPropertyType
         {
-            return "Числовое свойство";
+            get => "Числовое свойство";
         }
 
         public NumericProperty() : base()

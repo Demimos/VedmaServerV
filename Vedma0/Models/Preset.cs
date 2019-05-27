@@ -18,13 +18,14 @@ namespace Vedma0.Models
             EntityPresets = new List<EntityPreset>();
             BaseProperties = new List<BaseProperty>();
             EntityProperties = new List<EntityProperty>();
+            _Abilities = "[]";
         }
         public long Id { get; set; }
         [Required]
         public Guid GameId { get; set; }
         public Game Game { get; set; }
       
-        public int SortValue { get; set; }
+        public long SortValue { get; set; }
         
         public string _Abilities { get; set; }
 

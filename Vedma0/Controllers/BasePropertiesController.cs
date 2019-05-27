@@ -27,30 +27,33 @@ namespace Vedma0.Controllers
         }
 
         // GET: BaseProperties/Details/5
-        public async Task<IActionResult> Details(long? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Details(long? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var baseProperty = await _context.BaseProperties
-                .Include(b => b.Game)
-                .Include(b => b.Preset)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (baseProperty == null)
-            {
-                return NotFound();
-            }
+        //    var baseProperty = await _context.BaseProperties
+        //        .Include(b => b.Game)
+        //        .Include(b => b.Preset)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (baseProperty == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(baseProperty);
-        }
+        //    return View(baseProperty);
+        //}
 
         // GET: BaseProperties/Create
-        public IActionResult Create()
+        public IActionResult CreateText( long? Id)
         {
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name");
-            ViewData["PresetId"] = new SelectList(_context.Presets, "Id", "Name");
+            if (Id==null||!PresetExists((long)Id))
+            {
+                return BadRequest();
+            }
+            ViewBag.PresetId = Id;
             return View();
         }
 
@@ -59,16 +62,17 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,GameId,Description,PresetId,SortValue,Visible")] BaseProperty baseProperty)
+        public async Task<IActionResult> CreateText( [Bind("Name,Description,PresetId,Visible,DefaultValue")] BaseTextProperty baseProperty)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && PresetExists((long)baseProperty.PresetId))
             {
+                baseProperty.GameId = (Guid)GameId();
                 _context.Add(baseProperty);
+                await _context.SaveChangesAsync();
+                baseProperty.SortValue = baseProperty.Id;
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", baseProperty.GameId);
-            ViewData["PresetId"] = new SelectList(_context.Presets, "Id", "Name", baseProperty.PresetId);
             return View(baseProperty);
         }
 
@@ -161,6 +165,10 @@ namespace Vedma0.Controllers
         private bool BasePropertyExists(long id)
         {
             return _context.BaseProperties.Any(e => e.Id == id);
+        }
+        private bool PresetExists(long id)
+        {
+            return _context.Presets.Any(e => e.Id == id && e.GameId==GameId());
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Vedma0.Models.Properties
         public long? PresetId { get; set; }
         public Preset Preset { get; set; }
         [Required]
-        public int SortValue { get; set; }
+        public long SortValue { get; set; }
         [Required]
         public bool Visible { get; set; }
         [Required]
@@ -32,13 +32,13 @@ namespace Vedma0.Models.Properties
         public long BasePropertyId { get; set; }
         public BaseProperty BaseProperty { get; set; }
 
-        public string GetName()
+        public string GetName
         {
-            return Name;
+            get => Name;
         }
 
-        public abstract string GetValue();
+        public abstract string GetValue { get; }
 
-        public abstract string GetPropertyType();
+        public abstract string GetPropertyType { get; }
     }
 }

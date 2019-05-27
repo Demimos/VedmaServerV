@@ -13,8 +13,8 @@ namespace Vedma0.Models.ViewModels
 
         public PropertyView(EntityProperty p)
         {
-            Title = p.GetName();
-            Text = p.GetValue();
+            Title = p.GetName;
+            Text = p.GetValue;
         }
     }
 }

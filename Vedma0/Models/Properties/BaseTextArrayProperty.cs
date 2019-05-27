@@ -21,23 +21,27 @@ namespace Vedma0.Models.Properties
             get => JsonConvert.DeserializeObject<IList<string>>(_DefaultValues);
             set =>  _DefaultValues = JsonConvert.SerializeObject(value);
         }
-        public override string GetValue()
+        public override string GetValue
         {
-            if (DefaultValues.Count==0)
-                return "пусто";
-            string result = "";
-            for (int i=0;i<DefaultValues.Count;i++)
+            get
             {
-                result = result + DefaultValues[i];
-                if (i!=DefaultValues.Count-1)
-                    result = result + "\n";
+                if (DefaultValues.Count == 0)
+                    return "пусто";
+                string result = "";
+                for (int i = 0; i < DefaultValues.Count; i++)
+                {
+                    result = result + DefaultValues[i];
+                    if (i != DefaultValues.Count - 1)
+                        result = result + "\n";
+                }
+                return result;
             }
-            return result;
+         
         }
 
-        public override string GetPropertyType()
+        public override string GetPropertyType
         {
-            return "Свойство массивом строк";
+            get=> "Свойство массивом строк";
         }
     }
 }

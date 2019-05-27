@@ -33,18 +33,22 @@ namespace Vedma0.Models.Properties
                     _Values = JsonConvert.SerializeObject(value);
             }
         }
-        public override string GetValue()
+        public override string GetValue
         {
-            if (Values == null)
-                return "пусто";
-            string result = "";
-            for (int i = 0; i < Values.Count; i++)
+            get
             {
-                result = result + Values[i];
-                if (i != Values.Count - 1)
-                    result = result + "\n";
+                if (Values == null)
+                    return "пусто";
+                string result = "";
+                for (int i = 0; i < Values.Count; i++)
+                {
+                    result = result + Values[i];
+                    if (i != Values.Count - 1)
+                        result = result + "\n";
+                }
+                return result;
             }
-            return result;
+          
         }
 
         public TextArrayProperty() : base()
@@ -65,9 +69,9 @@ namespace Vedma0.Models.Properties
             PresetId = bp.PresetId;
             SortValue = bp.SortValue;
         }
-        public override string GetPropertyType()
+        public override string GetPropertyType
         {
-            return "Свойство массивом строк";
+            get => "Свойство массивом строк";
         }
     }
 }

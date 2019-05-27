@@ -13,9 +13,9 @@ namespace Vedma0.Models.Properties
         [Required]
         [DisplayName("Значение")]
         public string Value { get; set; }
-        public override string GetValue()
+        public override string GetValue
         {
-            return Value;
+            get=> Value;
         }
 
         public TextProperty():base()
@@ -36,9 +36,9 @@ namespace Vedma0.Models.Properties
             PresetId = bp.PresetId;
             SortValue = bp.SortValue;
         }
-        public override string GetPropertyType()
+        public override string GetPropertyType
         {
-            return "Текстовое свойство";
+            get => "Текстовое свойство";
         }
     }
 }
