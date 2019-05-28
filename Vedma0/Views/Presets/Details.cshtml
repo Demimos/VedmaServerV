@@ -53,11 +53,24 @@
     <a asp-action="Edit" asp-route-id="@Model.Id">Изменить</a> |
     <a asp-action="Index">Назад к списку</a>
 </div>
-<hr/>
+<hr />
 <h2>Базовые свойства</h2>
 <p>
-    <a asp-controller="BaseProperties" asp-action="CreateText" asp-route-id="@Model.Id">Создать текстовое свойство</a>
+    <span>
+        <a class="btn btn-default" asp-controller="BaseProperties" asp-action="Create" asp-route-type="Text" asp-route-id="@Model.Id">Создать текстовое свойство</a>
+    </span>
+    <span>
+        <a class="btn btn-default" asp-controller="BaseProperties" asp-action="Create" asp-route-type="Number" asp-route-id="@Model.Id">Создать числовое свойство</a>
+    </span>
+    <span>
+        <a class="btn btn-default" asp-controller="BaseProperties" asp-action="Create" asp-route-type="TextArray" asp-route-id="@Model.Id">Создать свойство в виде массива</a>
+    </span>
+    <span>
+        <a class="btn btn-default" asp-controller="BaseProperties" asp-action="Create" asp-route-type="Identity" asp-route-id="@Model.Id">Создать свойство взаимосвязи объектов</a>
+    </span>
 </p>
+
+
 @if (Model.BaseProperties.Count > 0)
 {
     <table class="table">
@@ -104,7 +117,8 @@
             }
         </tbody>
     </table>
-} else
+}
+else
 {
     <h3>Нет свойств</h3>
 }

@@ -12,7 +12,7 @@ namespace Vedma0.Models.Properties
     public class BaseTextArrayProperty : BaseProperty
     {
         [Required]
-        private string _DefaultValues { get; set; }
+        private string _DefaultValues { get; set; } = "[]";
         [NotMapped]
         [Required]
         [DisplayName("Значения")]

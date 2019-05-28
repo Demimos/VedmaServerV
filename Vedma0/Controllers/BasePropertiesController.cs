@@ -47,22 +47,64 @@ namespace Vedma0.Controllers
         //}
 
         // GET: BaseProperties/Create
-        public IActionResult CreateText( long? Id)
+        public IActionResult Create( long? Id, string type)
         {
-            if (Id==null||!PresetExists((long)Id))
+            if (Id==null || type==null || ! Enum.TryParse(type, out PropertyType ptype) || !PresetExists((long)Id))
             {
                 return BadRequest();
             }
             ViewBag.PresetId = Id;
-            return View();
+            switch (ptype)
+            {
+                case PropertyType.Text: return View("CreateText");
+                case PropertyType.Number: return View("CreateNumber");
+                case PropertyType.TextArray: return View("CreateTextArray");
+                case PropertyType.Identity: throw new NotImplementedException();
+                default: throw new MissingMethodException($"Необработанное значение Enum PropertyType: {ptype.ToString()}");
+            }
+          
         }
 
-        // POST: BaseProperties/Create
+        // POST: BaseProperties/CreateText
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateText( [Bind("Name,Description,PresetId,Visible,DefaultValue")] BaseTextProperty baseProperty)
+        {
+            return await ManageCreation(baseProperty);
+
+        }
+        // POST: BaseProperties/CreateNumber
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateNumber([Bind("Name,Description,PresetId,Visible,DefaultValue")] BaseNumericProperty baseProperty)
+        {
+            return await ManageCreation(baseProperty);
+        }
+        // POST: BaseProperties/CreateArray
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateArray([Bind("Name,Description,PresetId,Visible,_DefaultValues")] BaseTextArrayProperty baseProperty)
+        {
+            return await ManageCreation(baseProperty);
+        }
+        // POST: BaseProperties/CreateIdentity
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateIdentity([Bind("Name,Description,PresetId,Visible,DefaultValue")] BaseTextProperty baseProperty)
+        {
+            await new Task(new Action(() => throw new NotImplementedException()));
+            throw new NotImplementedException();//TODO Identity
+        }
+
+        private async Task<IActionResult> ManageCreation(BaseProperty baseProperty)
         {
             if (ModelState.IsValid && PresetExists((long)baseProperty.PresetId))
             {
@@ -71,7 +113,7 @@ namespace Vedma0.Controllers
                 await _context.SaveChangesAsync();
                 baseProperty.SortValue = baseProperty.Id;
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Presets",new { id = baseProperty.PresetId});
             }
             return View(baseProperty);
         }

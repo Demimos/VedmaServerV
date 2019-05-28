@@ -1,7 +1,7 @@
-﻿@model Vedma0.Models.Properties.BaseTextProperty
+﻿@model Vedma0.Models.Properties.BaseNumericProperty
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "CreateNumber";
     Layout = "~/Views/Shared/_Console.cshtml";
     if (Model != null)
     {
@@ -9,13 +9,13 @@
     }
 }
 
-<h2>Создание</h2>
+<h2>CreateNumber</h2>
 
-<h4>Базовое текстовое свойство</h4>
+<h4>BaseNumericProperty</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="CreateText">
+        <form asp-action="CreateNumber">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -23,14 +23,14 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="DefaultValue" class="control-label"></label>
                 <input asp-for="DefaultValue" class="form-control" />
                 <span asp-validation-for="DefaultValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="PresetId" value="@ViewData["PresetId"]" />
             <div class="form-group">
