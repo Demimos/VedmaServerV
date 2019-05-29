@@ -13,6 +13,7 @@ using Vedma0.Data;
 using Vedma0.Models;
 using Vedma0.Models.GameEntities;
 using Vedma0.Models.Helper;
+using Vedma0.Models.ManyToMany;
 using Vedma0.Models.ViewModels;
 
 namespace Vedma0.Controllers
@@ -169,6 +170,49 @@ namespace Vedma0.Controllers
             _context.Characters.Remove(character);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Characters/Delete/Presets/5
+        public async Task<IActionResult> Presets(long? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            Guid gid = (Guid)GameId();
+            var character = await _context.Characters.AsNoTracking().Include(m=>m.EntityPresets)
+                .FirstOrDefaultAsync(m => m.Id == id && m.GameId == gid);
+            if (character == null)
+            {
+                return NotFound();
+            }
+            var presets =await _context.Presets.AsNoTracking()
+                .Where(p => p.GameId == gid).ToListAsync();
+            foreach (var preset in presets)
+            {
+                var entityPreset = character.EntityPresets.FirstOrDefault(ep => ep.PresetId == preset.Id);
+                if (entityPreset != null)
+                    preset.EntityPresets.Add(entityPreset);
+            }
+           
+            return View(presets);
+        }
+
+        [HttpPost, ActionName("Presets")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPresets(long id, [FromBody] IList<long> presetIds)
+        {
+            var gid = (Guid)GameId();
+            var character = await _context.Characters.Include(c=>c.EntityPresets).FirstOrDefaultAsync(c => c.Id == id && gid == c.GameId);
+            if (character == null)
+                return NotFound();
+            var newIds = presetIds.Except(character.EntityPresets.Select(ep => ep.PresetId)).ToList();
+            var presets = await _context.Presets.Where(p => p.GameId==(Guid)GameId() && newIds.Contains(p.Id)).ToListAsync();
+            foreach (var ep in character.EntityPresets.Where(e => !presetIds.Contains(e.PresetId)))
+                character.EntityPresets.Remove(ep);
+            ((List<EntityPreset>)character.EntityPresets).AddRange(presets.Select(p => new EntityPreset { GameEntityId = id, PresetId = p.Id }));
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         private bool CharacterExists(long id)
