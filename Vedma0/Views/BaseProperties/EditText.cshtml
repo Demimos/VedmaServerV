@@ -1,4 +1,4 @@
-﻿@model Vedma0.Models.Properties.BaseProperty
+﻿@model Vedma0.Models.Properties.BaseTextProperty
 
 @{
     ViewData["Title"] = "Edit";
@@ -11,18 +11,15 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="EditText">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="GameId" />
+            <input type="hidden" asp-for="PresetId" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GameId" class="control-label"></label>
-                <select asp-for="GameId" class="form-control" asp-items="ViewBag.GameId"></select>
-                <span asp-validation-for="GameId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
@@ -30,9 +27,9 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PresetId" class="control-label"></label>
-                <select asp-for="PresetId" class="form-control" asp-items="ViewBag.PresetId"></select>
-                <span asp-validation-for="PresetId" class="text-danger"></span>
+                <label asp-for="DefaultValue" class="control-label"></label>
+                <input asp-for="DefaultValue" class="form-control" />
+                <span asp-validation-for="DefaultValue" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="SortValue" class="control-label"></label>
@@ -47,14 +44,14 @@
                 </div>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Сохранить" class="btn btn-default" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Presets" asp-action="Details" asp-route-id="@Model.PresetId">Назад к пресету</a>
 </div>
 
 @section Scripts {

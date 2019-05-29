@@ -100,8 +100,8 @@ namespace Vedma0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateIdentity([Bind("Name,Description,PresetId,Visible,DefaultValue")] BaseTextProperty baseProperty)
         {
-            await new Task(new Action(() => throw new NotImplementedException()));
-            throw new NotImplementedException();//TODO Identity
+            return await new Task<IActionResult>(new Func<IActionResult>(() => throw new NotImplementedException()));
+            //return await ManageCreation(baseProperty);
         }
 
         private async Task<IActionResult> ManageCreation(BaseProperty baseProperty)
@@ -126,14 +126,20 @@ namespace Vedma0.Controllers
                 return NotFound();
             }
 
-            var baseProperty = await _context.BaseProperties.FindAsync(id);
+            var baseProperty = await _context.BaseProperties.FirstOrDefaultAsync(bp=>bp.Id==id && bp.GameId==GameId());
             if (baseProperty == null)
             {
                 return NotFound();
             }
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", baseProperty.GameId);
-            ViewData["PresetId"] = new SelectList(_context.Presets, "Id", "Name", baseProperty.PresetId);
-            return View(baseProperty);
+            var @switch = new Dictionary<Type, Func<IActionResult>> {
+                { typeof(BaseTextProperty), () =>  this.View("EditText", baseProperty) },
+                { typeof(BaseNumericProperty), () =>  this.View("EditNumber", baseProperty) },
+                { typeof(BaseTextArrayProperty), () => this.View("EditTextArray", baseProperty) }
+            };
+            var ptype = baseProperty.GetType();
+            if (@switch.ContainsKey(ptype))
+                return @switch[ptype]();
+            throw new IndexOutOfRangeException($"неизвестный тип {ptype.ToString()}");
         }
 
         // POST: BaseProperties/Edit/5
@@ -141,9 +147,42 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Name,GameId,Description,PresetId,SortValue,Visible")] BaseProperty baseProperty)
+        public async Task<IActionResult> EditText(long id, [Bind("Id,Name,GameId,Description,PresetId,SortValue,Visible,DefaultValue")] BaseTextProperty baseProperty)
         {
-            if (id != baseProperty.Id)
+            return await ManageEditing(id, baseProperty);
+        }
+        // POST: BaseProperties/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditNumber(long id, [Bind("Id,Name,GameId,Description,PresetId,SortValue,Visible,DefaultValue")] BaseNumericProperty baseProperty)
+        {
+            return await ManageEditing(id, baseProperty);
+        }
+        // POST: BaseProperties/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditTextArray(long id, [Bind("Id,Name,GameId,Description,PresetId,SortValue,Visible,DefaultValues")] BaseTextArrayProperty baseProperty)
+        {
+            return await ManageEditing(id, baseProperty);
+        }
+        // POST: BaseProperties/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditIdentity(long id, [Bind("Id,Name,GameId,Description,PresetId,SortValue,Visible")] BaseTextProperty baseProperty)
+        {
+            return await new Task<IActionResult>(new Func<IActionResult> ( () => throw new NotImplementedException() ));
+          //  return await ManageEditing(id, baseProperty);
+        }
+
+        private async Task<IActionResult> ManageEditing(long id, BaseProperty baseProperty)
+        {
+            if (id != baseProperty.Id || baseProperty.GameId!=(Guid)GameId() || baseProperty.PresetId==null ||!PresetExists((long)baseProperty.PresetId))
             {
                 return NotFound();
             }
@@ -166,10 +205,8 @@ namespace Vedma0.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Presets", new { id = baseProperty.PresetId });
             }
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", baseProperty.GameId);
-            ViewData["PresetId"] = new SelectList(_context.Presets, "Id", "Name", baseProperty.PresetId);
             return View(baseProperty);
         }
 
@@ -181,11 +218,9 @@ namespace Vedma0.Controllers
                 return NotFound();
             }
 
-            var baseProperty = await _context.BaseProperties
-                .Include(b => b.Game)
-                .Include(b => b.Preset)
+            var baseProperty = await _context.BaseProperties.AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (baseProperty == null)
+            if (baseProperty == null || baseProperty.PresetId==null || !PresetExists( (long)baseProperty.PresetId))
             {
                 return NotFound();
             }

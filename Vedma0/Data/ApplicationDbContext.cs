@@ -99,5 +99,6 @@ namespace Vedma0.Data
         public DbSet<GameUser> GameUsers { get; set; }
         public DbSet<Vedma0.Models.Properties.BaseNumericProperty> BaseNumericProperty { get; set; }
         public DbSet<Vedma0.Models.Properties.BaseTextArrayProperty> BaseTextArrayProperty { get; set; }
+        public DbSet<Vedma0.Models.Properties.BaseTextProperty> BaseTextProperty { get; set; }
     }
 }

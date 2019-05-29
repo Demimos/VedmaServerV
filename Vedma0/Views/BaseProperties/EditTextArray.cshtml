@@ -1,0 +1,56 @@
+﻿@model Vedma0.Models.Properties.BaseTextArrayProperty
+
+@{
+    ViewData["Title"] = "EditTextArray";
+    Layout = "~/Views/Shared/_Console.cshtml";
+}
+
+<h2>EditTextArray</h2>
+
+<h4>BaseTextProperty</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditTextArray">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="GameId" />
+            <input type="hidden" asp-for="PresetId" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SortValue" class="control-label"></label>
+                <input asp-for="SortValue" class="form-control" />
+                <span asp-validation-for="SortValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="Visible" /> @Html.DisplayNameFor(model => model.Visible)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Presets" asp-action="Details" asp-route-id="@Model.PresetId">Назад к пресету</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
