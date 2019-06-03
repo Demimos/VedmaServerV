@@ -44,6 +44,8 @@ namespace Vedma0.Controllers
             }
             var game = await GameAsync();
             var character = await _context.Characters
+                .Include(c=>c.Properties)
+                .Include(c=>c.EntityPresets).ThenInclude(ep=>ep.Preset)
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(m => m.Id == id && game.Id==m.GameId);
             if (character == null)
@@ -194,23 +196,25 @@ namespace Vedma0.Controllers
                 if (entityPreset != null)
                     preset.EntityPresets.Add(entityPreset);
             }
-           
+            ViewBag.Id = id;
             return View(presets);
         }
 
         [HttpPost, ActionName("Presets")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPresets(long id, [FromBody] IList<long> presetIds)
+        public async Task<IActionResult> EditPresets(long id, IDictionary<string,bool> presetIds)
         {
             var gid = (Guid)GameId();
-            var character = await _context.Characters.Include(c=>c.EntityPresets).FirstOrDefaultAsync(c => c.Id == id && gid == c.GameId);
+            var character = await _context.Characters.Include(c=>c.EntityPresets).Include(c=>c.Properties).FirstOrDefaultAsync(c => c.Id == id && gid == c.GameId);
             if (character == null)
                 return NotFound();
-            var newIds = presetIds.Except(character.EntityPresets.Select(ep => ep.PresetId)).ToList();
-            var presets = await _context.Presets.Where(p => p.GameId==(Guid)GameId() && newIds.Contains(p.Id)).ToListAsync();
-            foreach (var ep in character.EntityPresets.Where(e => !presetIds.Contains(e.PresetId)))
-                character.EntityPresets.Remove(ep);
-            ((List<EntityPreset>)character.EntityPresets).AddRange(presets.Select(p => new EntityPreset { GameEntityId = id, PresetId = p.Id }));
+            var ids = presetIds.Where(pi => pi.Value).Select(pi => long.Parse(pi.Key));
+            var newIds = ids.Except(character.EntityPresets.Select(ep => ep.PresetId)).ToList();
+            var presets = await _context.Presets.Include(p=>p.BaseProperties).Where(p => p.GameId==(Guid)GameId() && newIds.Contains(p.Id)).ToListAsync();
+            foreach (var ep in character.EntityPresets.Where(e => !ids.Contains(e.PresetId)))
+                presets.First(p => p.Id == ep.PresetId).RemovePreset(character, _context);
+            foreach (Preset p in presets.Where(p => newIds.Contains(p.Id)))
+                p.AddPreset(character, _context);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { id });
         }

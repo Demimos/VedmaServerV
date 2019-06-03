@@ -7,66 +7,34 @@
 
 <h2>EditPresets</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Game)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SortValue)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model._Abilities)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SelfInsight)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Game.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SortValue)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item._Abilities)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SelfInsight)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<form asp-action="Presets" asp-route-id="@ViewBag.Id" method="post">
+    <div class="form-group">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                     
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Description)
+                    </th>
+                   
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>@Html.CheckBox(item.Id.ToString(), item.EntityPresets.Select(ep => ep.GameEntityId).Contains((long)ViewBag.Id))</td>
+                    <td>@Html.ValueFor(model => item.Name)</td>
+                    <td>@Html.ValueFor(model => item.Description)</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        <input type="submit" name="Готово" class="btn btn-default"/>
+    </div>
+</form>

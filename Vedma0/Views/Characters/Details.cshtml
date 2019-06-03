@@ -13,61 +13,143 @@
 </head>
 <body>
 
-<div>
-    <h4>Детали персонажа</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        @if (Model.User != null)
-        {
+    <div>
+        <h4>Детали персонажа</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.User)
+            </dt>
+            @if (Model.User != null)
+            {
+                <dd>
+                    @Html.DisplayFor(model => model.User.UserName)
+                </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.User.Email)
+                </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.User.PhoneNumber)
+                </dd>
+            }
+            else
+            {
+                <dd>
+                    @Html.Label("игрок не присвоен")
+                </dd>
+            }
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
             <dd>
-                @Html.DisplayFor(model => model.User.UserName)
+                @Html.DisplayFor(model => model.Name)
             </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Active)
+            </dt>
             <dd>
-                @Html.DisplayFor(model => model.User.Email)
+                @Html.DisplayFor(model => model.Active)
             </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.HasSuspendedSignal)
+            </dt>
             <dd>
-                @Html.DisplayFor(model => model.User.PhoneNumber)
+                @Html.DisplayFor(model => model.HasSuspendedSignal)
             </dd>
-        }
-        else
-        {
+            <dt>
+                @Html.DisplayNameFor(model => model.InActiveMessage)
+            </dt>
             <dd>
-                @Html.Label("игрок не присвоен")
+                @Html.DisplayFor(model => model.InActiveMessage)
             </dd>
-        }
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Active)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Active)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.HasSuspendedSignal)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.HasSuspendedSignal)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.InActiveMessage)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.InActiveMessage)
-        </dd>
 
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Изменить</a> |
-    <a asp-action="Index">К списку</a>
-</div>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id">Изменить</a> |
+        <a asp-action="Index">К списку</a>
+    </div>
+    <div>
+        <h4>Пресеты персонажа</h4> <a asp-action="Presets" asp-route-id="@Model.Id" class="btn btn-default">Изменить пресеты</a>
+
+
+        @foreach (var preset in Model.EntityPresets.Select(e=>e.Preset))
+        {
+            <hr />
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => preset.Name)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => preset.Name)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => preset.Title)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => preset.Title)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => preset.Description)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => preset.Description)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => preset.SelfInsight)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => preset.SelfInsight)
+                </dd>
+            </dl>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.Label("Название")
+                        </th>
+                        <th>
+                            @Html.Label("Значение")
+                        </th>
+                        <th>
+                            @Html.Label("Тип")
+                        </th>
+                        <th>
+                            @Html.Label("Описание")
+                        </th>
+                        <th>
+                            @Html.Label("Видимое")
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Properties.Where(p => p.PresetId == preset.Id).OrderBy(p => p.SortValue))
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.GetName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.GetValue)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.GetPropertyType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Visible)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+
+    </div>
+  
+
 </body>
 </html>
