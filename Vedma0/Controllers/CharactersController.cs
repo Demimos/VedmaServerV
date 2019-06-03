@@ -210,7 +210,7 @@ namespace Vedma0.Controllers
                 return NotFound();
             var ids = presetIds.Where(pi => pi.Value).Select(pi => long.Parse(pi.Key));
             var newIds = ids.Except(character.EntityPresets.Select(ep => ep.PresetId)).ToList();
-            var presets = await _context.Presets.Include(p=>p.BaseProperties).Where(p => p.GameId==(Guid)GameId() && newIds.Contains(p.Id)).ToListAsync();
+            var presets = await _context.Presets.Include(p=>p.BaseProperties).Where(p => p.GameId==gid).ToListAsync();
             foreach (var ep in character.EntityPresets.Where(e => !ids.Contains(e.PresetId)))
                 presets.First(p => p.Id == ep.PresetId).RemovePreset(character, _context);
             foreach (Preset p in presets.Where(p => newIds.Contains(p.Id)))
