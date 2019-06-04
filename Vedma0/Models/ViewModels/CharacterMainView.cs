@@ -17,7 +17,13 @@ namespace Vedma0.Models.ViewModels
         public CharacterMainView(Character character)
         {
             Id = character.Id;
-            Pages= character.Properties.Select(pr=>pr.Preset).GroupBy(p => p.Title).Select(group=>new PropertyPageView(group)).OrderBy(pv=>pv.SortValue).ToList();
+            var presets = new List<Preset>();
+            foreach(var preset in character.Properties.Select(pr => pr.Preset))
+            {
+                if (!presets.Contains(preset))
+                    presets.Add(preset);
+            }
+            Pages= presets.GroupBy(p => p.Title).Select(group=>new PropertyPageView(group)).OrderBy(pv=>pv.SortValue).ToList();
         }
     }
 }

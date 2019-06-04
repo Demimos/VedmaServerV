@@ -97,8 +97,8 @@ namespace Vedma0.Data
         public DbSet<BaseProperty> BaseProperties { get; set; }
         public DbSet<EntityProperty> Properties { get; set; }
         public DbSet<GameUser> GameUsers { get; set; }
-        public DbSet<Vedma0.Models.Properties.BaseNumericProperty> BaseNumericProperty { get; set; }
-        public DbSet<Vedma0.Models.Properties.BaseTextArrayProperty> BaseTextArrayProperty { get; set; }
-        public DbSet<Vedma0.Models.Properties.BaseTextProperty> BaseTextProperty { get; set; }
+        public DbSet<BaseNumericProperty> BaseNumericProperty { get; set; }
+        public DbSet<BaseTextArrayProperty> BaseTextArrayProperty { get; set; }
+        public DbSet<BaseTextProperty> BaseTextProperty { get; set; }
     }
 }

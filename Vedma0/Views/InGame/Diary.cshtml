@@ -1,0 +1,70 @@
+﻿@using Vedma0.Models.Helper;
+@model Vedma0.Models.ViewModels.DiaryListViewModel
+@addTagHelper "*, DiaryListTagHelper"
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Play.cshtml";
+}
+
+<h2>Дневник</h2>
+<form method="get">
+    <div class="form-group form-inline">
+        <p>
+            <label class="control-label">Сортировка по возрастанию: </label>
+            <input asp-for="DateSort"/>
+        </p> 
+        <p>
+            <label class="control-label">Тип сообщений: </label>
+            <select asp-for="Filter" asp-items="Html.GetEnumSelectList<Vedma0.Models.ViewModels.DiaryFilter>()"></select>
+            <input type="submit" value="Фильтр" class="btn btn-default" />
+        </p>
+       
+    </div>
+</form>
+<p>
+    <a asp-controller="Diary" asp-action="Create">Новая заметка</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Название")
+            </th>
+            <th>
+                @Html.DisplayName("Текст")
+            </th>
+            <th>
+                @Html.DisplayName("Дата")
+            </th>
+            <th>
+                @Html.DisplayName("Тип")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.DiaryPages)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Message)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-controller="Diary" asp-route-id="@item.Id">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<page-link page-model="Model" page-action="Diary"
+           page-url-filter="@(Model.Filter)"
+           page-url-datesort="@(Model.DateSort)"></page-link>

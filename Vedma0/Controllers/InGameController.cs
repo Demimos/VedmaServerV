@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Vedma0.Data;
 using Vedma0.Models;
 using Vedma0.Models.Helper;
+using Vedma0.Models.Logging;
 using Vedma0.Models.Properties;
 using Vedma0.Models.ViewModels;
 
@@ -19,15 +20,17 @@ namespace Vedma0.Controllers
     [AccessRule(AccessLevel.Player)]
     public class InGameController : VedmaController
     {
+        private const int pagesPerSheet=30;
+
         public InGameController(ApplicationDbContext context):base(context)
         {  
         }
         // GET: InGame
-        public async Task<ActionResult> Index(string Id)
+        public async Task<ActionResult> Index(int? page)
         {
             var uid = UserId();
             var game = await GameAsync();
-            var character = await _context.Characters.FirstOrDefaultAsync(c => c.UserId == uid && c.GameId== game.Id);
+            var character = await _context.Characters.AsNoTracking().FirstOrDefaultAsync(c => c.UserId == uid && c.GameId== game.Id);
             if (IsMaster(game))
             {
                 ViewData["IsMaster"] = "true";
@@ -38,14 +41,62 @@ namespace Vedma0.Controllers
             {
                 return View("NoCharacter");
             }
-            character.Properties = await _context.Properties.Include(p=>p.Preset).Where(p => p.GameEntityId == character.Id &&  p.Visible).ToListAsync();
-            return View(new CharacterMainView(character));
+            character.Properties = await _context.Properties.AsNoTracking().Include(p=>p.Preset).Where(p => p.GameEntityId == character.Id &&  p.Visible).ToListAsync();
+            CharacterMainView main = new CharacterMainView(character);
+            if (main.Pages.Count == 0)
+                ViewBag.NoContent = true;
+            else
+            {
+                ViewBag.NoContent = false;
+                if (page != null && main.Pages.Count > (int)page)
+                {
+                    ViewBag.PageView = page;
+                }
+                else
+                    ViewBag.PageView = 0;
+                if (main.Pages.Count - 1 > ViewBag.PageView)
+                    ViewBag.HasNext = true;
+                else
+                    ViewBag.HasNext = false;
+                if (ViewBag.PageView > 0)
+                {
+                    ViewBag.HasPrevious = true;
+                }
+                else
+                    ViewBag.HasPrevious = false;
+            }
+            return View(main);
         }
 
-        // GET: InGame/Details/5
-        public ActionResult Details(int id)
+        //GET: InGame/Diary
+        public async Task<IActionResult> Diary(int? page,  int? filter, bool? datesort)
         {
-            return View();
+            if (page == null)
+                page = 0;
+            if (datesort == null)
+                datesort = false;
+            if (filter == null||filter>=3)
+                filter = 0;
+            var game = await GameAsync();
+            if (IsMaster(game))
+            {
+                ViewData["IsMaster"] = "true";
+                ViewData["Id"] = game.Id;
+            }
+            ViewData["Title"] = game.Name;
+            var character = await _context.Characters
+              .AsNoTracking()
+              .FirstOrDefaultAsync(d => d.GameId == (Guid)GameId() && d.UserId == UserId());
+            if (character == null)
+                return View("NoCharacter");
+            IQueryable<DiaryPage> source = _context.Diary
+                .AsNoTracking()
+                  .Where(d => d.CharacterId == character.Id);
+            var diaryType = (DiaryFilter)filter;
+            var count = await source.CountAsync();
+            IEnumerable<DiaryPage> items = await source.Skip((int)page * pagesPerSheet).Take(pagesPerSheet).ToListAsync();
+            DiaryListViewModel pageViewModel = new DiaryListViewModel(items, count, pagesPerSheet , (int)page, (bool)datesort, diaryType);
+            return View(pageViewModel);
         }
 
         // GET: InGame/Create
@@ -95,27 +146,10 @@ namespace Vedma0.Controllers
         }
 
         // GET: InGame/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Quit()
         {
-            return View();
+            HttpContext.Response.Cookies.Delete("in_Game");
+            return RedirectToAction("Index","Home",null);
         }
-
-        // POST: InGame/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-       
     }
 }

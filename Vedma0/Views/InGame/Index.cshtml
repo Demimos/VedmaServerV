@@ -3,13 +3,56 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Play.cshtml";
+    if (!ViewBag.NoContent)
+    {
+        ViewBag.Next = ViewBag.PageView + 1;
+        ViewBag.Previous = ViewBag.PageView - 1;
+    }
 }
-
-<h2>Index</h2>
-
 <div>
-    <h4>Character</h4>
-    <hr />
+    @if (!ViewBag.NoContent)
+    {
+        <div align="center">
+            <h2>
+                @if (@ViewBag.HasPrevious)
+                {
+                    <a asp-route-page="@ViewBag.Previous" asp-route-id="@Model.Id" class="btn btn-default"><</a>
+                }
+                @Model.Pages[ViewBag.PageView].Title
+
+                @if (@ViewBag.HasNext)
+                {
+                    <a asp-route-page="@ViewBag.Next" asp-route-id="@Model.Id" class="btn btn-default">></a>
+                }
+            </h2>
+        </div>
+      
+        <br/>
+        <div>
+                <table class="table">
+                    <thead>
+                        <tr></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Vedma0.Models.ViewModels.PropertyView item in Model.Pages[ViewBag.PageView].PropertyViews)
+                        {
+                            <tr>
+                                <td>
+                                    <b>@item.Title</b>
+                                </td>
+                                <td>
+                                    @item.Text
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+    }
+    else
+    {
+        <h2>Список свойств пуст</h2>
+    }
 
 </div>
 

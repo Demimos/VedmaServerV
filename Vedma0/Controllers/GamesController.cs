@@ -13,20 +13,16 @@ using Vedma0.Models;
 namespace Vedma0.Controllers
 {
     [Authorize]
-    public class GamesController : Controller
+    public class GamesController : VedmaController
     {
-        UserManager<VedmaUser> _userManager;
-        public GamesController(UserManager<VedmaUser> manager, ApplicationDbContext contex)
+        public GamesController(ApplicationDbContext contex):base(contex)
         {
-            _userManager = manager;
-            _context = contex;
-
         }
-        private readonly ApplicationDbContext _context;
 
         // GET: Games
         public async Task<IActionResult> Index()
         {
+            ViewBag.UserId = UserId();
             return View(await _context.Games.ToListAsync());
         }
 
@@ -65,7 +61,7 @@ namespace Vedma0.Controllers
         {
             if (ModelState.IsValid)
             {
-                game.OwnerId = (await _userManager.GetUserAsync(HttpContext.User)).Id;
+                game.OwnerId = UserId();
                 _context.Add(game);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Vedma0.Models.GameEntities;
 using Vedma0.Models.Properties;
 
 namespace Vedma0.Models.ViewModels
