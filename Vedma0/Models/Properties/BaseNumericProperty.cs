@@ -21,7 +21,7 @@ namespace Vedma0.Models.Properties
 
         public override string GetValue
         {
-            get => DefaultValue.ToString("F", CultureInfo.InvariantCulture);
+            get => string.Format(CultureInfo.InvariantCulture,"{0:0.##}", DefaultValue);
         }
     }
 }
