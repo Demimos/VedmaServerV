@@ -6,10 +6,14 @@
 }
 
 <h2>Пользователи проекта</h2>
-
-<p>
-    <a asp-action="Create" class="btn btn-default">Добавить пользователя</a>
-</p>
+<form asp-action="AddUser">
+    <div class="form-group form-inline">
+        <p>
+            <label class="control-label">Введите почту: </label>
+            <input type="email" name="Email" />    <input type="submit" value="Добавить пользователя" class="btn btn-default" />
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>

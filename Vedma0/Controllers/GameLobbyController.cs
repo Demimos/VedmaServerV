@@ -7,14 +7,19 @@ using Microsoft.AspNetCore.Mvc;
 using Vedma0.Data;
 using Vedma0.Models.Helper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Vedma0.Models;
+using Vedma0.Models.ManyToMany;
 
 namespace Vedma0.Controllers
 {
     [AccessRule(AccessLevel.Developer)]
     public class GameLobbyController : VedmaController
     {
-        public GameLobbyController(ApplicationDbContext context) : base(context)
+        private UserManager<VedmaUser> _userManager { get; set; }
+        public GameLobbyController(UserManager<VedmaUser> userManager, ApplicationDbContext context) : base(context)
         {
+            _userManager = userManager;
         }
 
         // GET: GameLobby
@@ -26,33 +31,26 @@ namespace Vedma0.Controllers
             return View(users);
         }
 
-        // GET: GameLobby/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
 
-        // GET: GameLobby/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
 
-        // POST: GameLobby/Create
+        // POST: GameLobby/AddUser
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> AddUser(string email)
         {
-            try
+            if (email == null)
+                return BadRequest();
+            var user = await _userManager.FindByEmailAsync(email);
+            var game = await _context.Games.Include(g=>g.GameUsers).FirstOrDefaultAsync(g=>g.Id==(Guid)GameId());
+            if (!game.GameUsers.Select(gu=>gu.VedmaUserId).Contains(user.Id))
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
+                game.GameUsers.Add(new GameUser {
+                    GameId = game.Id,
+                    VedmaUserId = user.Id
+                });
+                await _context.SaveChangesAsync();
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: GameLobby/Edit/5
