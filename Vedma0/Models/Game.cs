@@ -45,6 +45,8 @@ namespace Vedma0.Models
         public bool Active { get; set; }
         [Required]
         public string _MasterIds { get; set; }
+        [Required]
+        public string _BlackList { get; set; }
 
         public IList<GameEntity> GameEntities { get; set; }
         public IList<Preset> Presets { get; set; }
@@ -52,6 +54,13 @@ namespace Vedma0.Models
         public IList<EntityProperty> EntityProperties { get; set; }
         //public IList<Log> Logs { get; set; }
         public IList<GameUser> GameUsers { get; set; }
+
+        [NotMapped]
+        public IList<string> BlackList
+        {
+            get => JsonConvert.DeserializeObject<IList<string>>(_BlackList);
+            set => _BlackList = JsonConvert.SerializeObject(value);
+        }
 
         [NotMapped]
         public IList<string> MasterIds
@@ -64,6 +73,7 @@ namespace Vedma0.Models
         public Game()
         {
             MasterIds = new List<string>();
+            BlackList = new List<string>();
             GameEntities = new List<GameEntity>();
             Presets = new List<Preset>();
             BaseProperties = new List<BaseProperty>();

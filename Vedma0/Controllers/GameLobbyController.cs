@@ -41,6 +41,10 @@ namespace Vedma0.Controllers
             if (email == null)
                 return BadRequest();
             var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
             var game = await _context.Games.Include(g=>g.GameUsers).FirstOrDefaultAsync(g=>g.Id==(Guid)GameId());
             if (!game.GameUsers.Select(gu=>gu.VedmaUserId).Contains(user.Id))
             {
@@ -53,44 +57,104 @@ namespace Vedma0.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: GameLobby/Edit/5
-        public ActionResult Edit(int id)
+        // GET: GameLobby/Bind/fvref4r34?characterid=1
+        public async Task<ActionResult> Bind(string id)
         {
-            return View();
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound();
+            ViewBag.userId = user.Id;
+            var characters = await _context.Characters
+                .AsNoTracking()
+                .Where(c => c.GameId == (Guid)GameId() && c.UserId != null)
+                .ToListAsync();
+            return View(characters);
         }
 
-        // POST: GameLobby/Edit/5
+        // POST: GameLobby/Bind/5fewef344c
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Bind(string id, long characterId)
         {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound();
+            var character =await _context.Characters.FindAsync(characterId);
+            var gameId = (Guid)GameId();
+            var game = await _context.Games
+                .AsNoTracking()
+                .Include(g => g.GameUsers)
+                .FirstOrDefaultAsync(g => g.Id == gameId);
+            if (character==null 
+                || character.GameId!=gameId 
+                || character.UserId!=null
+                || !game.GameUsers.Select(gu=>gu.VedmaUserId).Contains(user.Id))
+            {
+                return NotFound();
+            }
             try
             {
-                // TODO: Add update logic here
-
+                character.UserId = user.Id;
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                ViewBag.userId = user.Id;
+                ViewBag.Error = "Произошла ошибка, попробуйте ещё раз";
+                var characters = await _context.Characters
+                    .AsNoTracking()
+                    .Where(c => c.GameId == (Guid)GameId() && c.UserId != null)
+                    .ToListAsync();
+                return View(characters);
             }
         }
 
-        // GET: GameLobby/Delete/5
-        public ActionResult Delete(int id)
+        // GET: GameLobby/Remove/fdsfsadcds5
+        public async Task<ActionResult> Remove(string id)
         {
-            return View();
+            if (id == null)
+                return BadRequest();
+            var game = await _context.Games
+                .AsNoTracking()
+                .Include(g => g.GameUsers)
+                .FirstOrDefaultAsync(g => g.Id == (Guid)GameId());
+            if (!game.GameUsers.Select(gu=>gu.VedmaUserId).Contains(id))
+                return RedirectToAction(nameof(Index));
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                game.GameUsers.Remove(game.GameUsers.First(gu => gu.VedmaUserId == id));
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(user);
         }
 
-        // POST: GameLobby/Delete/5
-        [HttpPost]
+        // POST: GameLobby/Remove/5213r2d32crrr3f
+        [HttpPost, ActionName("Remove")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> RemoveConfirmed(string id)
         {
+            if (id == null)
+                return BadRequest();
+            var game = await _context.Games
+                .AsNoTracking()
+                .Include(g => g.GameUsers)
+                .FirstOrDefaultAsync(g => g.Id == (Guid)GameId());
             try
             {
-                // TODO: Add delete logic here
-
+                game.GameUsers.Remove(game.GameUsers.First(gu => gu.VedmaUserId == id));
+                game.BlackList.Add(id);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
