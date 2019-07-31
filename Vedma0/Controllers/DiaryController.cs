@@ -31,30 +31,18 @@ namespace Vedma0.Controllers
             return View(character.Diary);
         }
 
-        // GET: Diary/Details/5
-        //public async Task<IActionResult> Details(long? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var diaryPage = await _context.Diary
-        //        .AsNoTracking()
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (diaryPage == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(diaryPage);
-        //}
+      
 
         // GET: Diary/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CharacterId"] = new SelectList(_context.Characters, "Id", "Discriminator");
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name");
+            var game = await GameAsync();
+            if (IsMaster(game))
+            {
+                ViewData["IsMaster"] = "true";
+                ViewData["Id"] = game.Id;
+            }
+            ViewData["Title"] = game.Name;
             return View();
         }
 
@@ -63,74 +51,30 @@ namespace Vedma0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Message,DateTime,GameId,CharacterId,Type")] DiaryPage diaryPage)
+        public async Task<IActionResult> Create([Bind("Title,Message")] DiaryPage diaryPage)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(diaryPage);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (diaryPage.Title == null || diaryPage.Message == null)
+                    return View();
+                diaryPage.Type = DiaryPageType.User;
+                diaryPage.GameId = (Guid)GameId();
+                diaryPage.CharacterId = (await GetCharacter()).Id;
+                diaryPage.DateTime = DateTime.UtcNow;
+                _context.Diary.Add(diaryPage);
+                await _context.SaveChangesAsync(); ;
+                return RedirectToAction(nameof(Index), "InGame",null);
             }
-            ViewData["CharacterId"] = new SelectList(_context.Characters, "Id", "Discriminator", diaryPage.CharacterId);
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", diaryPage.GameId);
+            var game = await GameAsync();
+            if (IsMaster(game))
+            {
+                ViewData["IsMaster"] = "true";
+                ViewData["Id"] = game.Id;
+            }
             return View(diaryPage);
         }
 
-        // GET: Diary/Edit/5
-        public async Task<IActionResult> Edit(long? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var diaryPage = await _context.Diary.FindAsync(id);
-            if (diaryPage == null)
-            {
-                return NotFound();
-            }
-            ViewData["CharacterId"] = new SelectList(_context.Characters, "Id", "Discriminator", diaryPage.CharacterId);
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", diaryPage.GameId);
-            return View(diaryPage);
-        }
-
-        // POST: Diary/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Title,Message,DateTime,GameId,CharacterId,Type")] DiaryPage diaryPage)
-        {
-            if (id != diaryPage.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(diaryPage);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DiaryPageExists(diaryPage.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CharacterId"] = new SelectList(_context.Characters, "Id", "Discriminator", diaryPage.CharacterId);
-            ViewData["GameId"] = new SelectList(_context.Games, "Id", "Name", diaryPage.GameId);
-            return View(diaryPage);
-        }
-
+       
         // GET: Diary/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {

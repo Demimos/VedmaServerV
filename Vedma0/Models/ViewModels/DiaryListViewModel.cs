@@ -19,11 +19,13 @@ namespace Vedma0.Models.ViewModels
         public IEnumerable<DiaryPage> DiaryPages { get; set; } // элементы для загрузки сраницы
         public DiaryListViewModel(IEnumerable<DiaryPage> diaryPages, int count, int pagesPerSheet, int page, bool dateSort, DiaryFilter filter = DiaryFilter.All)
         {
+            Filter = filter;
             DiaryPages = diaryPages;
+           
             Count = count;
             PagesPerSheet = pagesPerSheet;
             PageNumber = page;
-            Filter = filter;
+        
             DateSort = dateSort;
         }
     }

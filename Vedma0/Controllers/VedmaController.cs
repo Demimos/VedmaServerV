@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Vedma0.Data;
 using Vedma0.Models;
+using Vedma0.Models.GameEntities;
 using Vedma0.Models.Helper;
 
 namespace Vedma0.Controllers
@@ -19,6 +20,10 @@ namespace Vedma0.Controllers
             _context = context;
             if (context == null)
                 throw new ArgumentNullException("ApplicationDbContext","База данных отсутствует в конструкторе контроллера");
+        }
+        protected async Task<Character> GetCharacter()
+        {
+            return await _context.Characters.AsNoTracking().FirstOrDefaultAsync(c => c.UserId == UserId() && c.GameId == GameId());
         }
         /// <summary>
         /// Id текущей игры
