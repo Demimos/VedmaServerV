@@ -100,5 +100,7 @@ namespace Vedma0.Data
         public DbSet<BaseNumericProperty> BaseNumericProperty { get; set; }
         public DbSet<BaseTextArrayProperty> BaseTextArrayProperty { get; set; }
         public DbSet<BaseTextProperty> BaseTextProperty { get; set; }
+        public DbSet<Publisher> Publisher { get; set; }
+        public DbSet<Article> Articles { get; set; }
     }
 }
