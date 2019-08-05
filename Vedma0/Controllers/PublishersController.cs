@@ -182,6 +182,8 @@ namespace Vedma0.Controllers
             var properties = _context.Properties.Where(p => p.PresetId == publisher.Id);
             _context.Properties.RemoveRange(properties);
             _context.BaseProperties.RemoveRange(publisher.BaseProperties);
+            var articles = _context.Articles.Where(a => a.PublisherId == publisher.Id);
+            _context.Articles.RemoveRange(articles);
             _context.Publisher.Remove(publisher);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

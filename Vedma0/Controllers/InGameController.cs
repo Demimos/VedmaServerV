@@ -42,7 +42,11 @@ namespace Vedma0.Controllers
             {
                 return View("NoCharacter");
             }
-            character.Properties = await _context.Properties.AsNoTracking().Include(p=>p.Preset).Where(p => p.GameEntityId == character.Id &&  p.Visible).ToListAsync();
+            character.Properties = await _context.Properties
+                .AsNoTracking()
+                .Include(p=>p.Preset)
+                .Where(p => p.GameEntityId == character.Id &&  p.Visible)
+                .ToListAsync();
             CharacterMainView main = new CharacterMainView(character);
             if (main.Pages.Count == 0)
                 ViewBag.NoContent = true;
