@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Vedma0.Models.Logging;
+using Vedma0.Models.ManyToMany;
 
 namespace Vedma0.Models.GameEntities
 {
@@ -25,6 +26,9 @@ namespace Vedma0.Models.GameEntities
 
         public IList<DiaryPage> Diary { get; set; }
         
+        public IList<CharacterReflection> Contacts { get; set; }
+
+        public IList<CharacterReflection> Watchers { get; set; }
 
 
         public Character()

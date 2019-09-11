@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Vedma0.Data;
 
 namespace Vedma0.Models.GameEntities
 {
@@ -15,9 +17,9 @@ namespace Vedma0.Models.GameEntities
         /// No root, m_*** - image medium
         /// s_*** - image small
         /// </summary>
-        public byte[] Image { get; set; }
+        public string Image { get; set; }
         public bool AllowAnonymus { get; set; }
         public IEnumerable<Article> Articles { get; set; }
-
+        public int ArticleCount { get; set; }
     }
 }

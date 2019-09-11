@@ -72,6 +72,32 @@ namespace Vedma0.Controllers
             }
             return View(main);
         }
+        public async Task<IActionResult> Contacts()
+        {
+            var uid = UserId();
+            var gid = GameId();
+            var character = await _context.Characters
+                .Include(p=>p.Contacts)
+                .ThenInclude(p=>p.Reflection)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.UserId == uid);
+            return View(character.Contacts.Select(p=>new ContactView(p.Reflection)));
+        }
+
+        public async Task<IActionResult> Contact(long id)
+        {
+            var uid = UserId();
+            var gid = GameId();
+            var character = await _context.Characters
+                .Include(p => p.Contacts)
+                .ThenInclude(p => p.Reflection)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.UserId == uid);
+            var contact = character.Contacts.FirstOrDefault(p => p.ReflectionId == id).Reflection;
+            if (contact == null)
+                return NotFound();
+            return View(new ContactView(contact));
+        }
 
         //GET: InGame/Diary
         public async Task<IActionResult> Diary(int? page,  int? filter, bool? datesort)
@@ -111,47 +137,65 @@ namespace Vedma0.Controllers
             return View(pageViewModel);
         }
 
-       
-        //    if (diaryPage.Title == null || diaryPage.Message == null)
-        //        return View();
-        //    diaryPage.Type = DiaryPageType.User;
-        //    diaryPage.GameId = (Guid) GameId();
-        //    diaryPage.CharacterId = (await GetCharacter()).Id;
-        //    diaryPage.DateTime = DateTime.UtcNow;
-        //    try
-        //    {
-        //        _context.Diary.Add(diaryPage);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Diary));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
 
         // GET: InGame/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> News()
         {
-            return View();
+            var uid = UserId();
+            var character = await _context.Characters
+                .Include(p=>p.Properties)
+                .ThenInclude(p=>p.Preset)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.UserId == uid);
+
+            var publishers = character.Properties.Select(p => p.Preset).Where(p => p is Publisher).Select(p=>new PublisherView((Publisher)p));
+            return View(publishers);
         }
 
-        // POST: InGame/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> News(long publisherId)
         {
-            try
-            {
-                // TODO: Add update logic here
+            var uid = UserId();
+            var gid = GameId();
+            var character = await _context.Characters
+                .Include(p => p.Properties)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.UserId == uid);
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            if (!character.Properties.Select(p => (long)p.PresetId).ToList().Contains(publisherId))
+                return NotFound();
+
+            var news = await _context.Articles
+                .AsNoTracking()
+                .Where(p => p.PublisherId == publisherId)
+                .Select(p=>new ArticleView(p))
+                .ToListAsync();
+
+            return View(news);
         }
+
+        public async Task<IActionResult> NewsOne(long articleId)
+        {
+            var uid = UserId();
+            var gid = GameId();
+            var character = await _context.Characters
+                .Include(p => p.Properties)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.UserId == uid);
+
+            var article = await _context.Articles
+                .Include(p=>p.Publisher)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == articleId);
+
+            if (article==null || !character.Properties
+                .Select(p => (long)p.PresetId)
+                .ToList()
+                .Contains((long)article.PublisherId))
+                return NotFound();
+
+            return View(new ArticleView(article));
+        }
+
 
         // GET: InGame/Quit
         public ActionResult Quit()

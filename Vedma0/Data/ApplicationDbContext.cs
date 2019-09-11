@@ -52,6 +52,20 @@ namespace Vedma0.Data
                 .WithMany(c => c.GameUsers)
                 .HasForeignKey(sc => sc.VedmaUserId);
 
+            modelBuilder.Entity<CharacterReflection>()
+             .HasKey(t => new { t.OwnerId, t.ReflectionId });
+
+            modelBuilder.Entity<CharacterReflection>()
+                .HasOne(sc => sc.Owner)
+                .WithMany(s => s.Contacts)
+                .HasForeignKey(sc => sc.OwnerId);
+
+            modelBuilder.Entity<CharacterReflection>()
+                .HasOne(sc => sc.Reflection)
+                .WithMany(c => c.Watchers)
+                .HasForeignKey(sc => sc.ReflectionId);
+
+
             modelBuilder.Entity<Log>()
                 .HasOne(sc => sc.Game)
                 .WithMany()
@@ -75,6 +89,8 @@ namespace Vedma0.Data
                .HasOne(sc => sc.Character)
                .WithMany(c => c.Diary)
                .OnDelete(DeleteBehavior.Restrict);
+
+          
 
             modelBuilder.Entity<TextProperty>();
             modelBuilder.Entity<NumericProperty>();

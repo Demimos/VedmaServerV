@@ -13,6 +13,7 @@ using Vedma0.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Vedma0.Models;
+using Vedma0.Models.Signal;
 
 namespace Vedma0
 {
@@ -34,7 +35,7 @@ namespace Vedma0
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            services.AddSignalR();
             services.AddDbContextPool<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -47,6 +48,10 @@ namespace Vedma0
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<NetSignalHub>("/chat");
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
