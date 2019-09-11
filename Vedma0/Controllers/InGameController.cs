@@ -94,6 +94,8 @@ namespace Vedma0.Controllers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.UserId == uid);
             var contact = character.Contacts.FirstOrDefault(p => p.ReflectionId == id).Reflection;
+            _context.Characters.Attach(contact);
+            _context.Entry(contact).Collection(p => p.Properties).Load();
             if (contact == null)
                 return NotFound();
             return View(new ContactView(contact));

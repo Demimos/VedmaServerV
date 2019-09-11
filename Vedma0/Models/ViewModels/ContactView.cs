@@ -16,7 +16,7 @@ namespace Vedma0.Models.ViewModels
         {
             this.Id = character.Id;
             this.Name = character.Name;
-            this.Properties = character.Properties.Select(p => new PropertyView(p)).ToList();
+            this.Properties = character.Properties.Where(p=>p.BaseProperty.Visible).Select(p => new PropertyView(p)).ToList();
         }
     }
 }
