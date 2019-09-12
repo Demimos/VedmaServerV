@@ -13,6 +13,7 @@ using Vedma0.Models;
 using Vedma0.Models.GameEntities;
 using Vedma0.Models.Helper;
 using Vedma0.Models.Logging;
+using Vedma0.Models.ManyToMany;
 using Vedma0.Models.Properties;
 using Vedma0.Models.ViewModels;
 
@@ -99,6 +100,33 @@ namespace Vedma0.Controllers
             if (contact == null)
                 return NotFound();
             return View(new ContactView(contact));
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Contacts(string tag)
+        {
+            if (tag == null)
+                return BadRequest();
+            var uid = UserId();
+            var gid = GameId();
+            var character = await _context.Characters
+                .Include(p => p.Contacts)
+                .ThenInclude(p => p.Reflection)
+                .FirstOrDefaultAsync(p => p.UserId == uid);
+            var target = await _context.Characters.FirstOrDefaultAsync(p => p.Tag == tag && p.GameId == gid);
+            if (target == null)
+                return RedirectToAction("NoContact");
+            var contact = new CharacterReflection()
+            {
+                Owner = character,
+                Reflection = target
+            };
+            character.Contacts.Add(contact);
+            target.Watchers.Add(contact);
+            await _context.SaveChangesAsync();
+            return View(character.Contacts.Select(p => new ContactView(p.Reflection)));
         }
 
         //GET: InGame/Diary
@@ -198,6 +226,12 @@ namespace Vedma0.Controllers
             return View(new ArticleView(article));
         }
 
+        public async Task<IActionResult> MyTag()
+        {
+            var character = await _context.Characters.FirstOrDefaultAsync(p => p.GameId == GameId() && p.UserId == UserId());
+            await character.SetTag(_context);
+            return View(character.Tag);
+        }
 
         // GET: InGame/Quit
         public ActionResult Quit()

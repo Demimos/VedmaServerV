@@ -26,8 +26,14 @@ namespace Vedma0.Models.Properties
         public Preset Preset { get; set; }
         [Required]
         public long SortValue { get; set; }
+
         [Required]
+        [DisplayName("Видимое")]
         public bool Visible { get; set; }
+
+        [Required]
+        [DisplayName("Видимое другим людям")]
+        public bool Reflected { get; set; }
 
 
         public IList<EntityProperty> Properties { get; set; }
