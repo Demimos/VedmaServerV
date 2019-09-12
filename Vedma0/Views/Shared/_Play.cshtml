@@ -34,11 +34,9 @@
                     <ul class="nav navbar-nav">
                         <li><a asp-area="" asp-controller="InGame" asp-action="Index">Персонаж</a></li>
                         <li><a asp-area="" asp-controller="InGame" asp-action="Contacts">Контакты</a></li>
-                      
                         <li><a asp-area="" asp-controller="InGame" asp-action="News">Новости</a></li>
-                      
-                 
                         <li><a asp-area="" asp-controller="InGame" asp-action="Diary"> Дневник</a></li>
+                        <li><a asp-area="" asp-controller="InGame" asp-action="MyTag">Идентификатор</a></li>
                         <li><a asp-area="" asp-controller="InGame" asp-action="Quit">Выйти из игры</a></li>
                     </ul>
                     @if (ViewData["IsMaster"].Equals("true"))
