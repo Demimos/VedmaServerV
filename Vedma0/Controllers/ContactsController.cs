@@ -48,9 +48,9 @@ namespace Vedma0.Controllers
             ViewBag.characters = await _context.Characters
                 .AsNoTracking()
                 .Where(p => p.GameId == gid)
-                .Select(p => new { p.Name, p.Id })
+                .Select(p => new Selectable(p.Id.ToString(), p.Name))
                 .ToListAsync();
-            return View(character);
+            return View(new ContactList(character));
         }
 
         [HttpPost]
@@ -88,7 +88,10 @@ namespace Vedma0.Controllers
             }
             catch
             {
-                return View(character);
+                ViewBag.characters = characters
+               .Select(p => new Selectable(p.Id.ToString(), p.Name))
+               .ToList();
+                return View(new ContactList(character));
             }
         }
 
